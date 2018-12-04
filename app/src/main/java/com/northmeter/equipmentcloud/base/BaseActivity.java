@@ -70,6 +70,15 @@ public abstract class BaseActivity extends AppCompatActivity implements IBaseLis
 
     }
 
+    @Override
+    public void refreshData() {
+
+    }
+
+    @Override
+    public void goActivity() {
+
+    }
 
     @Override
     protected void onDestroy() {

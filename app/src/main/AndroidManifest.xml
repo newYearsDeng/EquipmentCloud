@@ -42,8 +42,18 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
 
+        <!--二维码扫描-->
+        <activity
+            android:name=".camera.activity.CaptureActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="com.northmeter.equipmentcloud.camera.activity.CaptureActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
