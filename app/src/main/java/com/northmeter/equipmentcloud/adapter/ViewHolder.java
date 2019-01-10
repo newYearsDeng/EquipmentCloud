@@ -1,4 +1,4 @@
-package com.northmeter.equipmentcloud.common;
+package com.northmeter.equipmentcloud.adapter;
 
 import android.content.Context;
 import android.util.SparseArray;
@@ -9,8 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
- * Created by admin on 2018/11/28.
-*/
+ * Created by liangminhua on 16/9/29.
+ * liangminhua
+ * E-mail:elecat@126.com
+ * 通用的ViewHolder
+ */
 public class ViewHolder {
 
     private final SparseArray<View> mViews;

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_toolbar_normal_title"/>
+    <include layout="@layout/activity_progect_selfcheking_title"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="25dp"
+            android:paddingRight="30dp"
+            android:dividerHeight="5px"
+            android:layerType="software"
+            android:scrollbarSize="1px"
+            android:scrollbarThumbVertical="@color/color_little_gray"
+            tools:listitem="@layout/item_progect_selfchecking_result" />
+
+        <TextView
+            android:id="@+id/tv_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="暂无数据"
+            android:visibility="gone" />
+    </FrameLayout>
+
+
+</LinearLayout>

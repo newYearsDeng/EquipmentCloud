@@ -83,9 +83,6 @@ public class InitOkGo {
 
     /**
      * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
-     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
-     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
-     * 重要的事情说三遍，以下代码不要直接使用
      */
     private class SafeTrustManager implements X509TrustManager {
         @Override
@@ -111,9 +108,6 @@ public class InitOkGo {
 
     /**
      * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
-     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
-     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
-     * 重要的事情说三遍，以下代码不要直接使用
      */
     private class SafeHostnameVerifier implements HostnameVerifier {
         @Override

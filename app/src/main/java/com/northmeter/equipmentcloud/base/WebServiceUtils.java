@@ -7,6 +7,9 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
+import com.northmeter.equipmentcloud.bean.CommonResponse;
+import com.northmeter.equipmentcloud.http.DialogCallback;
+import com.northmeter.equipmentcloud.utils.SaveUserInfo;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
@@ -20,31 +23,28 @@ public class WebServiceUtils {
         String resultSuccess(String result);
         String resultFail(String result);
     }
-
-    public static void getServiceInfo(final Context context , String odb, final CallBack callBack) {
-//        Map jsonString = new OrderHttp().sendOrder(odb);
+//
+//    public static void getServiceInfo(final Context context , Map jsonString, final CallBack callBack) {
 //        Gson gson = new Gson();
-//        OkGo.<MeterControlResponse>post(API.sendMiddleware)
+//        OkGo.<CommonResponse>post(API.sendMiddleware)
 //                .tag(context)
 //                .isSpliceUrl(true)//post请求的url上拼接上参数
-//                .headers("username", SaveUserInfo.getLoginUser(context).getUsername())
-//                .headers("userpwd", SaveUserInfo.getLoginUser(context).getUserpwd())
-//                .params("ipcid", Constants.ipcid)
+//                .headers("token", SaveUserInfo.getLoginUser(context).getToken())
 //                .upJson(gson.toJson(jsonString))
-//                .execute(new DialogCallback<MeterControlResponse>((Activity) context,MeterControlResponse.class) {
+//                .execute(new DialogCallback<CommonResponse>((Activity) context,CommonResponse.class) {
 //                             @Override
-//                             public void onSuccess(Response<MeterControlResponse> response) {
+//                             public void onSuccess(Response<CommonResponse> response) {
 //                                 callBack.resultSuccess(response.body());
 //                             }
 //
 //                             @Override
-//                             public void onError(Response<MeterControlResponse> response) {
+//                             public void onError(Response<CommonResponse> response) {
 //                                 super.onError(response);
 //                                 callBack.resultFail("Error");
 //                             }
 //                         }
 //                );
-    }
+//    }
 
 
 }

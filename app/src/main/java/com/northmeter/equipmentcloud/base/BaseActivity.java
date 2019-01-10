@@ -1,6 +1,7 @@
 package com.northmeter.equipmentcloud.base;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -86,4 +87,39 @@ public abstract class BaseActivity extends AppCompatActivity implements IBaseLis
         unbinder.unbind();
         BaseAppManager.getAppManager().removeAcitivity(this);
     }
+
+    /**
+     * activity简单跳转
+     */
+    public void goActivity(Class<?> cls) {
+        Intent intent = new Intent(this, cls);
+        startActivity(intent);
+    }
+
+    /**
+     * activity带数据跳转
+     */
+    public void goActivity(Class<?> cls, Intent intent) {
+        intent.setClass(this, cls);
+        startActivity(intent);
+    }
+
+    /**
+     * activity带数据跳转
+     */
+    public void goActivityWithTitle(Class<?> cls, String title) {
+        Intent intent = new Intent();
+        intent.setClass(this, cls);
+        intent.putExtra("title", title);
+        startActivity(intent);
+    }
+
+    protected void showMsg(String msg) {
+        ToastUtil.showToastShort(mContext, msg);
+    }
+
+    protected void showMsgLong(String msg) {
+        ToastUtil.showToastLong(mContext, msg);
+    }
+
 }

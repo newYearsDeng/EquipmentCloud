@@ -1,4 +1,4 @@
-package com.northmeter.equipmentcloud.common;
+package com.northmeter.equipmentcloud.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import java.util.List;
 
 /**
- * Created by admin on 2018/11/28.
+ * Created by admin on 16/9/29.
  */
 public abstract class CommonAdapter<T> extends BaseAdapter {
 

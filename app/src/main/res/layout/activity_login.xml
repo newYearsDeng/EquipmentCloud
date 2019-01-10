@@ -3,35 +3,49 @@
               android:id="@+id/ll_login_bg"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:gravity="center"
-              android:background="@color/color_main_back"
+              android:gravity="top|center"
+              android:background="@color/white"
               android:fitsSystemWindows="true"
               android:orientation="vertical">
     <!--Logo-->
-    <ImageView
-        android:id="@+id/iv_login_logo"
-        android:layout_width="70dp"
-        android:layout_height="62dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="70dp"
-        android:src="@mipmap/icon_login_user" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="213dp"
+        android:background="@drawable/login_background"
+        android:gravity="center">
+        <ImageView
+            android:scaleType="centerCrop"
+            android:layout_centerInParent="true"
+            android:layout_width="95dp"
+            android:layout_height="95dp"
+            android:background="@drawable/login_backup">
+        </ImageView>
+        <ImageView
+            android:scaleType="centerCrop"
+            android:layout_centerInParent="true"
+            android:layout_width="51dp"
+            android:layout_height="14dp"
+            android:background="@drawable/login_logo"/>
+    </RelativeLayout>
+
+
     <!--账号框-->
     <RelativeLayout
         android:id="@+id/relative_acount"
-        android:layout_width="300dp"
+        android:layout_marginTop="45dp"
+        android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_marginLeft="35dp"
-        android:layout_marginRight="35dp">
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp">
 
         <ImageView
             android:id="@+id/icon_tel"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/icon_login_tel"/>
+            android:scaleType="centerCrop"
+            android:layout_width="15dp"
+            android:layout_height="16dp"
+            android:src="@drawable/login_users"/>
         <EditText
             android:id="@+id/et_login_name"
             android:layout_toRightOf="@+id/icon_tel"
@@ -46,84 +60,95 @@
             android:inputType="text"
             android:lines="1"
             android:text=""
+            android:textSize="14sp"
             android:textColor="@color/black"
-            android:textColorHint="#c9caca"/>
+            android:textColorHint="#888888"/>
 
         <ImageView
             android:id="@+id/iv_delete"
+            android:scaleType="centerCrop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10px"
-            android:src="@mipmap/icon_delete"/>
+            android:src="@drawable/icon_delete"/>
 
     </RelativeLayout>
-    <TextView
-        android:layout_width="300dp"
-        android:layout_height="2dp"
-        android:background="@color/color_little_gray"
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_height="1dp"
+        android:background="#E6E6E6"
         />
 
     <!--密码框-->
     <RelativeLayout
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_marginLeft="35dp"
-        android:layout_marginRight="35dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="35dp"
         >
         <ImageView
             android:id="@+id/icon_check"
+            android:scaleType="centerCrop"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/icon_login_check"/>
+            android:layout_width="14dp"
+            android:layout_height="16dp"
+            android:src="@drawable/login_passwd"/>
         <EditText
             android:id="@+id/et_login_passwd"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_toRightOf="@+id/icon_check"
-            android:layout_toLeftOf="@+id/to_get_code"
+            android:layout_toLeftOf="@+id/iv_show"
             android:layout_marginLeft="14dp"
             android:background="@null"
             android:inputType="textPassword"
             android:text=""
+            android:textSize="14sp"
             android:textColor="@color/black"
             android:hint="请输入账户密码"
-            android:textColorHint="#c9caca"/>
+            android:textColorHint="#888888"/>
 
-        <Button
-            android:visibility="gone"
-            android:id="@+id/to_get_code"
-            android:layout_width="wrap_content"
-            android:layout_height="74px"
+        <ImageView
+            android:id="@+id/iv_show"
+            android:layout_width="18dp"
+            android:layout_height="11dp"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center_vertical"
             android:layout_alignParentRight="true"
-            android:textSize="13sp"
-            android:textColor="@color/black"
-            android:text="获取验证码"
             android:layout_centerVertical="true"
-            android:background="@drawable/login_get_style" />
+            android:layout_marginRight="10px"
+            android:src="@drawable/login_air"/> />
     </RelativeLayout>
-    <TextView
-        android:layout_width="300dp"
-        android:layout_height="2dp"
-        android:background="@color/color_little_gray"
+    <view
+        android:layout_width="match_parent"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_height="1dp"
+        android:background="#E6E6E6"
         />
 
     <!--登录-->
     <Button
         android:id="@+id/btn_login"
-        android:layout_width="300dp"
-        android:layout_height="45dp"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="46dp"
+        android:layout_marginTop="42dp"
         android:background="@drawable/selector_sure_button_bg"
         android:text="登  录"
+        android:textColor="@color/white"
         android:textSize="18sp" />
 
 </LinearLayout>

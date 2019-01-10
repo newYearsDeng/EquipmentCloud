@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="18dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/iv_left_item"
+        android:layout_width="3dp"
+        android:layout_height="match_parent"
+        android:background="@color/color_already" />
+
+    <RelativeLayout
+        android:id="@+id/relative_acount"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:padding="16dp"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/icon_tel"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/record_down_build"/>
+        <TextView
+            android:id="@+id/et_record_name"
+            android:layout_toRightOf="@+id/icon_tel"
+            android:layout_toLeftOf="@+id/checkbox_record"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="left|center_vertical"
+            android:layout_marginLeft="10dp"
+            android:background="@null"
+            android:inputType="text"
+            android:lines="1"
+            android:maxLines="1"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            tools:text="龙辉花园14栋A单位"/>
+
+        <CheckBox
+            android:id="@+id/checkbox_record"
+            android:scaleType="centerCrop"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="center_vertical"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:button="@null"
+            android:checked="false"
+            android:background="@drawable/record_checked_style"/>
+
+    </RelativeLayout>
+</LinearLayout>

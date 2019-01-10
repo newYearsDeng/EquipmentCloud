@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#E0E0E0"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="217dp">
+        <ImageView
+            android:scaleType="centerCrop"
+            android:layout_width="13dp"
+            android:layout_height="13dp"
+            android:layout_marginTop="37dp"
+            android:layout_marginLeft="94dp"
+            android:background="@drawable/self_result_round_1">
+        </ImageView>
+        <ImageView
+            android:scaleType="centerCrop"
+            android:layout_width="31dp"
+            android:layout_height="31dp"
+            android:layout_marginTop="96dp"
+            android:layout_marginLeft="53dp"
+            android:background="@drawable/self_result_round_2">
+        </ImageView>
+        <ImageView
+            android:scaleType="centerCrop"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="89dp"
+            android:layout_marginRight="86dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/self_result_round_3">
+        </ImageView>
+
+        <ImageView
+            android:scaleType="centerCrop"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="145dp"
+            android:layout_marginRight="121dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/self_result_round_4">
+        </ImageView>
+
+        <ImageView
+            android:scaleType="centerCrop"
+            android:layout_centerInParent="true"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/self_result_round_center">
+        </ImageView>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_centerInParent="true">
+            <TextView
+                android:id="@+id/tv_selfchecking_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:text="12/15"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:text="失败率"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp">
+        <ImageView
+            android:id="@+id/icon_check"
+            android:layout_toLeftOf="@+id/icon_iv_2"
+            android:scaleType="centerCrop"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:src="@drawable/content_background_shape"/>
+        <ImageView
+            android:id="@+id/icon_iv_2"
+            android:layout_toLeftOf="@+id/et_login_passwd"
+            android:scaleType="centerCrop"
+            android:layout_centerVertical="true"
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:src="@drawable/content_background_oval"/>
+        <TextView
+            android:id="@+id/et_login_passwd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:text="明细"
+            android:textSize="16sp"
+            android:textColor="@color/black" />
+
+        <ImageView
+            android:id="@+id/icon_iv_3"
+            android:layout_toRightOf="@+id/et_login_passwd"
+            android:scaleType="centerCrop"
+            android:layout_centerVertical="true"
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:src="@drawable/content_background_oval"/>
+
+        <ImageView
+            android:id="@+id/iv_show"
+            android:layout_toRightOf="@+id/icon_iv_3"
+            android:layout_alignParentRight="true"
+            android:scaleType="centerCrop"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="5dp"
+            android:src="@drawable/content_background_shape"/>
+    </RelativeLayout>
+
+</LinearLayout>

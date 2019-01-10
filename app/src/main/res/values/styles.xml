@@ -17,4 +17,26 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="tablayout_text_apperance">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#fff</item>
+    </style>
+
+    <style name="PopupAnimation" mce_bogus="1" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/open</item>
+        <item name="android:windowExitAnimation">@anim/close</item>
+    </style>
+
+    <!-- 普通对话框 自定义 -->
+    <style name="dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:windowBackground">@drawable/image_dialog_bg</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.6</item>
+    </style>
+
 </resources>
