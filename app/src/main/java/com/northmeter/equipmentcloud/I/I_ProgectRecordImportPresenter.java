@@ -6,8 +6,9 @@ package com.northmeter.equipmentcloud.I;
 
 public interface I_ProgectRecordImportPresenter {
     /**建筑列表下载*/
-    void getRecordImportList(int projectId);
+    void getRecordImportBuildList(int projectId);
 
     /**上传档案*/
-    void saveProgectRecord(String equipmentName,String equipmentId,int itemTypeId,String address,int projectId);
+    void saveProgectRecord(int projectId,int recordId , String equipmentName, String equipmentId, String itemTypeId,
+                           String equipmentAddress);
 }

@@ -22,12 +22,12 @@
         <item name="contentInsetStart">0dp</item>
     </style>
 
-    <style name="welcomeTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+    <style name="welcomeTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowContentOverlay">@null</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">false</item>
-        <!--<item name="android:windowBackground">@drawable/main_filsh_back</item>-->
+        <!--<item name="android:windowBackground">@drawable/pro_manage_banner</item>-->
     </style>
 </resources>

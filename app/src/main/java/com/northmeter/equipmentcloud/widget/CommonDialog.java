@@ -60,14 +60,14 @@ public class CommonDialog<T> extends Dialog{
         //将自定义布局加载到dialog上
         setContentView(dialogView);
 
-        Button summit = dialogView.findViewById(0);
+        Button summit = dialogView.findViewById(R.id.btn_summit);
         summit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 callBack.onConfirm();
             }
         });
-        Button cancel = dialogView.findViewById(0);
+        Button cancel = dialogView.findViewById(R.id.btn_cancle);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

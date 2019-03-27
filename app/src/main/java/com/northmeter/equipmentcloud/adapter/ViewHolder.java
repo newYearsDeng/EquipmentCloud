@@ -5,6 +5,7 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -79,6 +80,16 @@ public class ViewHolder {
             mViews.put(viewId, textView);
         }
         textView.setText(res);
+    }
+
+    public void getCheckViewSet(int viewId,boolean check) {
+
+        CheckBox checkBox = (CheckBox) mViews.get(viewId);
+        if (checkBox == null) {
+            checkBox = mConvertView.findViewById(viewId);
+            mViews.put(viewId, checkBox);
+        }
+        checkBox.setChecked(check);
     }
 
     /**

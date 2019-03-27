@@ -1,5 +1,6 @@
 package com.northmeter.equipmentcloud.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,72 +8,25 @@ import java.util.List;
  * 项目列表
  */
 
-public class ProgectListResponse extends CommonResponse{
+public class ProgectListResponse extends CommonResponse {
 
-    public PageInfo page;
+    private List<PageList> list;
 
-    public PageInfo getPage() {
-        return page;
+    public List<PageList> getList() {
+        return list;
     }
 
-    public void setPage(PageInfo page) {
-        this.page = page;
+    public void setList(List<PageList> list) {
+        this.list = list;
     }
 
-    public class PageInfo{
-        private long totalCount;
-        private long pageSize;
-        private long totalPage;
-        private long currPage;
-        private List<PageList> list;
-
-        public long getTotalCount() {
-            return totalCount;
-        }
-
-        public void setTotalCount(long totalCount) {
-            this.totalCount = totalCount;
-        }
-
-        public long getPageSize() {
-            return pageSize;
-        }
-
-        public void setPageSize(long pageSize) {
-            this.pageSize = pageSize;
-        }
-
-        public long getTotalPage() {
-            return totalPage;
-        }
-
-        public void setTotalPage(long totalPage) {
-            this.totalPage = totalPage;
-        }
-
-        public long getCurrPage() {
-            return currPage;
-        }
-
-        public void setCurrPage(long currPage) {
-            this.currPage = currPage;
-        }
-
-        public List<PageList> getList() {
-            return list;
-        }
-
-        public void setList(List<PageList> list) {
-            this.list = list;
-        }
-    }
-
-    public class PageList{
-        private int recordId;
-        private String projectName;
-        private String createEmpName;
-        private String createTime;
-        private List<PrincipalMsgList> principalMsg;
+    public class PageList implements Serializable{
+        private int recordId;//项目id
+        private String projectName;//项目名称
+        private String createTime;//创建时间，格式：YYMMDDhhmm
+        private int equipmentCount;//设备的总数
+        private int equipmentUnregistCount;//未注册的设备
+        private int equipmentUnactivateCount;//未激活的设备
 
         public int getRecordId() {
             return recordId;
@@ -90,14 +44,6 @@ public class ProgectListResponse extends CommonResponse{
             this.projectName = projectName;
         }
 
-        public String getCreateEmpName() {
-            return createEmpName;
-        }
-
-        public void setCreateEmpName(String createEmpName) {
-            this.createEmpName = createEmpName;
-        }
-
         public String getCreateTime() {
             return createTime;
         }
@@ -106,54 +52,31 @@ public class ProgectListResponse extends CommonResponse{
             this.createTime = createTime;
         }
 
-        public List<PrincipalMsgList> getPrincipalMsg() {
-            return principalMsg;
+        public int getEquipmentCount() {
+            return equipmentCount;
         }
 
-        public void setPrincipalMsg(List<PrincipalMsgList> principalMsg) {
-            this.principalMsg = principalMsg;
-        }
-    }
-
-
-    public class PrincipalMsgList{
-        private String userId;
-        private String roleId;
-        private String userName;
-        private String personName;
-
-        public String getUserId() {
-            return userId;
+        public void setEquipmentCount(int equipmentCount) {
+            this.equipmentCount = equipmentCount;
         }
 
-        public void setUserId(String userId) {
-            this.userId = userId;
+        public int getEquipmentUnregistCount() {
+            return equipmentUnregistCount;
         }
 
-        public String getRoleId() {
-            return roleId;
+        public void setEquipmentUnregistCount(int equipmentUnregistCount) {
+            this.equipmentUnregistCount = equipmentUnregistCount;
         }
 
-        public void setRoleId(String roleId) {
-            this.roleId = roleId;
+        public int getEquipmentUnactivateCount() {
+            return equipmentUnactivateCount;
         }
 
-        public String getUserName() {
-            return userName;
-        }
-
-        public void setUserName(String userName) {
-            this.userName = userName;
-        }
-
-        public String getPersonName() {
-            return personName;
-        }
-
-        public void setPersonName(String personName) {
-            this.personName = personName;
+        public void setEquipmentUnactivateCount(int equipmentUnactivateCount) {
+            this.equipmentUnactivateCount = equipmentUnactivateCount;
         }
     }
+
 
 }
 

@@ -37,13 +37,13 @@
 
         <RelativeLayout
             android:id="@+id/capture_crop_view"
-            android:layout_width="482px"
-            android:layout_height="482px"
+            android:layout_width="268dp"
+            android:layout_height="260dp"
             android:paddingLeft="5px"
             android:paddingRight="5px"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/capture_back" >
+            android:background="@drawable/record_capture_back" >
 
             <ImageView
                 android:id="@+id/capture_scan_line"
@@ -75,60 +75,54 @@
                 android:gravity="center"
                 android:textColor="@color/color_little_gray"
                 />
+
             <RelativeLayout
+                android:background="@drawable/content_background_trans"
+                android:layout_centerInParent="true"
                 android:layout_below="@+id/text_ti"
-                android:layout_width="482px"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_centerHorizontal="true"
-                android:id="@+id/relativeLayout">
-                <LinearLayout
+                android:layout_width="268dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="35dp"
+                >
+                <ImageView
+                    android:id="@+id/button_flash"
+                    android:scaleType="centerCrop"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:src="@drawable/capture_show_off"/>
+                <EditText
+                    android:id="@+id/et_equipment_num"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
+                    android:layout_gravity="center"
+                    android:layout_toRightOf="@+id/button_flash"
+                    android:layout_toLeftOf="@+id/iv_show"
+                    android:layout_marginLeft="14dp"
+                    android:background="@null"
+                    android:inputType="text"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:hint="手动输入通讯地址"
+                    android:textColorHint="#22C99E"/>
+
+                <TextView
+                    android:id="@+id/tv_sure"
+                    android:layout_width="wrap_content"
                     android:gravity="center"
-                    android:layout_alignParentLeft="true">
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/capture_camera_editor"/>
-                    <TextView
-                        android:layout_marginTop="20px"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="输入水表编号"
-                        android:textSize="15sp"
-                        android:gravity="center"
-                        android:textColor="@color/color_little_gray"
-                        />
-                </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/control_light"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
                     android:layout_alignParentRight="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
-                    <ImageView
-                        android:id="@+id/button_flash"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/capture_show_off"/>
-
-                </LinearLayout>
-
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="5dp"
+                    android:text="确定"
+                    android:textSize="16sp"
+                    android:textColor="#22C99E"/>
             </RelativeLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/relativeLayout"
-                android:layout_alignEnd="@+id/relativeLayout"
-                android:layout_marginBottom="47dp"
-                android:gravity="center"
-                android:text="打开手电筒"
-                android:textColor="@color/color_little_gray"
-                android:textSize="15sp" />
 
         </RelativeLayout>
 

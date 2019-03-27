@@ -15,6 +15,8 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:paddingLeft="11dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:background="@drawable/content_background">
         <ImageView
             android:id="@+id/icon_tel"
@@ -27,7 +29,7 @@
         <EditText
             android:id="@+id/et_search_name"
             android:layout_toRightOf="@+id/icon_tel"
-            android:layout_toLeftOf="@+id/iv_delete"
+            android:layout_toLeftOf="@+id/tv_search"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
@@ -40,6 +42,16 @@
             android:textSize="14sp"
             android:textColor="@color/black"
             android:textColorHint="#888888"/>
+        <TextView
+            android:id="@+id/tv_search"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:text="搜索"
+            android:textColor="#666666"
+            android:textSize="15sp"
+            />
 
     </RelativeLayout>
 

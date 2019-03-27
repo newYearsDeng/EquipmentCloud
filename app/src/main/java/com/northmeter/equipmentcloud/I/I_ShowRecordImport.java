@@ -11,6 +11,6 @@ import java.util.List;
 
 public interface I_ShowRecordImport {
     void showData(List<RecordImportResponse.BuildList> datas);
-    void returnSuccess();
-    void returnFail();
+    void returnSuccess(String msg);
+    void returnFail(String msg);
 }

@@ -1,12 +1,19 @@
 package com.northmeter.equipmentcloud.activity;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
 import com.northmeter.equipmentcloud.R;
 import com.northmeter.equipmentcloud.base.BaseActivity;
+import com.northmeter.equipmentcloud.camera.activity.CaptureActivity;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -20,6 +27,11 @@ public class ProgectManagementActivity extends BaseActivity {
     @BindView(R.id.tv_toolbar_title)
     TextView tvToolbarTitle;
 
+    private int projectId;
+    private String projectName;
+    private Intent intent;
+    private static final int REQUEST_CAMERARESULT=201;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_progect_management;
@@ -28,11 +40,55 @@ public class ProgectManagementActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+                    showMsg("该功能需要您授权打开相机");
+                }
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CAMERARESULT);
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CAMERARESULT:
+                boolean isAllGranted = true;
+                for(int result : grantResults){
+                    if(result == PackageManager.PERMISSION_DENIED){
+                        isAllGranted = false;
+                        break;
+                    }
+                }
+                if(!isAllGranted){
+                    //权限有缺失
+                    showMsg("该功能需要您授权打开相机");
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivityForResult(intent, 10);
+                }
+                break;
+        }
+
     }
 
     @Override
     public void initIntentData() {
         super.initIntentData();
+        projectId = getIntent().getIntExtra("projectId",0);
+        projectName = getIntent().getStringExtra("projectName");
+        intent = new Intent();
+        intent.putExtra("projectId",projectId);
+        intent.putExtra("projectName",projectName);
     }
 
     @Override
@@ -59,13 +115,13 @@ public class ProgectManagementActivity extends BaseActivity {
                 this.finish();
                 break;
             case R.id.ll_pro_manage_import:
-                goActivity(ProgectRecordImportActivity.class);
+                goActivity(ProgectRecordImportActivity.class,intent);
                 break;
             case R.id.ll_pro_manage_download:
-                goActivity(ProgectRecordDownActivity.class);
+                goActivity(ProgectRecordDownActivity.class,intent);
                 break;
             case R.id.ll_pro_manage_selfchecking:
-                goActivity(ProgectSelfCheckingActivity.class);
+                goActivity(ProgectSelfCheckingActivity.class,intent);
                 break;
         }
     }

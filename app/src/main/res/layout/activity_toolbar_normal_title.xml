@@ -16,9 +16,10 @@
 
         <ImageView
             android:id="@+id/btn_tb_back"
-            android:layout_width="10dp"
-            android:layout_height="18dp"
-            android:layout_marginLeft="15dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:padding="5dp"
+            android:layout_marginLeft="10dp"
             android:layout_gravity="left|center_vertical"
             android:layout_centerVertical="true"
             android:background="@null"
@@ -41,7 +42,7 @@
         <TextView
             android:id="@+id/tv_right_text"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="15dp"
+            android:layout_marginRight="10dp"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:gravity="center_vertical"
@@ -51,16 +52,30 @@
             android:textSize="16sp" />
 
         <ImageView
-            android:id="@+id/iv_right_icon"
+            android:id="@+id/iv_device_add"
+            android:visibility="gone"
+            android:scaleType="centerCrop"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/iv_device_del"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:padding="5dp"
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true"
+            android:src="@drawable/device_list_add"/>
+
+        <ImageView
+            android:id="@+id/iv_device_del"
             android:visibility="gone"
             android:scaleType="centerCrop"
             android:layout_alignParentRight="true"
             android:layout_marginRight="15dp"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="24dp"
+            android:layout_height="28dp"
+            android:padding="5dp"
             android:gravity="center_vertical"
             android:layout_centerVertical="true"
-            android:src="@drawable/record_import_scan"/>
+            android:src="@drawable/device_list_delete"/>
     </RelativeLayout>
 
 </android.support.v7.widget.Toolbar>

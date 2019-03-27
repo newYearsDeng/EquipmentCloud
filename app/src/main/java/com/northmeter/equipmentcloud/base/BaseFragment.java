@@ -1,11 +1,28 @@
 package com.northmeter.equipmentcloud.base;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.lzy.okgo.OkGo;
+import com.northmeter.equipmentcloud.R;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -15,6 +32,8 @@ import butterknife.Unbinder;
  */
 public abstract  class BaseFragment extends Fragment {
     private Unbinder unbinder;
+    private Context context;
+    private LoadingDialog mLoadingDialog;
 
     public BaseFragment() {
     }
@@ -23,6 +42,7 @@ public abstract  class BaseFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         startGetArgument(savedInstanceState);
+
     }
     @Nullable
     @Override
@@ -37,6 +57,7 @@ public abstract  class BaseFragment extends Fragment {
          unbinder = ButterKnife.bind(this, view);
         //初始化控件
         finishCreateView(savedInstanceState);
+        context = getActivity();
     }
 
 
@@ -45,6 +66,8 @@ public abstract  class BaseFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         unbinder.unbind();
+        OkGo.getInstance().cancelTag(this);
+        EventBus.getDefault().unregister(this);
     }
 
     protected abstract int getLayoutResId();
@@ -60,5 +83,77 @@ public abstract  class BaseFragment extends Fragment {
      */
     protected abstract void finishCreateView(Bundle savedInstanceState);
 
+    protected void showMsg(String msg) {
+        ToastUtil.showToastShort(context, msg);
+    }
+
+    protected void showMsgLong(String msg) {
+        ToastUtil.showToastLong(context, msg);
+    }
+
+    protected void startLoadingDialog(){
+        mLoadingDialog = new LoadingDialog(context);
+        mLoadingDialog.setLoadingText("加载中,请稍后...");
+        mLoadingDialog.show();
+
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                handeler.sendEmptyMessage(0);
+            }
+        };
+        new Timer().schedule(timerTask,15000);
+    }
+
+    Handler handeler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            mLoadingDialog.close();
+        }
+    };
+
+    protected void stopLoadingDialog(){
+        if(mLoadingDialog==null){
+            mLoadingDialog = new LoadingDialog(context);
+        }
+        mLoadingDialog.close();
+    }
+
+
+    public void dialog_show(Bitmap bitmap, String data){
+        try{
+            final AlertDialog dialogSex = new AlertDialog.Builder(getActivity()).create();
+            dialogSex.show();
+            Window window = dialogSex.getWindow();
+            window.setContentView(R.layout.dialog_layout);
+
+            dialogSex.setCanceledOnTouchOutside(true);
+            dialogSex.setCancelable(true);
+
+            // 在此设置显示动画
+            window.setWindowAnimations(R.style.AnimBottom_Dialog);
+
+            TextView textview_1 = (TextView) window.findViewById(R.id.textview_1);
+            ImageView image_show = (ImageView) window.findViewById(R.id.image_show);
+            image_show.setImageBitmap(bitmap);
+            textview_1.setText(data);
+
+
+            dialogSex.show();
+
+            window.findViewById(R.id.relativeLayout2).setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View arg0) {
+                    // TODO Auto-generated method stub
+                    dialogSex.cancel();
+                }
+            });
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 
 }

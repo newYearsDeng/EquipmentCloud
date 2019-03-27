@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:background="#EAEAEA"
+    android:id="@+id/linear_buildlist">
+
+    <LinearLayout
+        android:background="@color/white"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        android:paddingLeft="17dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_build_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="left|center_vertical"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:maxLines="1"
+            tools:text="设备名称" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:background="@color/white"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:paddingRight="10dp"
+        android:gravity="center_vertical|right"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_device_register"
+            android:visibility="gone"
+            android:layout_width="64dp"
+            android:layout_height="26dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/selector_sure_button_content_white"
+            android:text="未注册"
+            android:textColor="@color/color_login_button"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_device_active"
+            android:visibility="visible"
+            android:layout_width="64dp"
+            android:layout_height="26dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/selector_sure_button_bg"
+            android:text="设备测试"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_get_result"
+            android:visibility="visible"
+            android:layout_width="64dp"
+            android:layout_height="26dp"
+            android:layout_marginLeft="10dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/selector_sure_button_bg"
+            android:text="查看结果"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+
+        <ImageView
+            android:id="@+id/btn_device_info"
+            android:layout_marginLeft="10dp"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:padding="5dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/device_list_info"/>
+
+        <CheckBox
+            android:visibility="gone"
+            android:id="@+id/btn_device_check"
+            android:layout_marginLeft="15dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:button="@null"
+            android:checked="false"
+            android:background="@drawable/device_checked_style" />
+    </LinearLayout>
+
+
+</LinearLayout>

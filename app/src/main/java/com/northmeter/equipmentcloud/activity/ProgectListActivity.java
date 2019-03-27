@@ -5,13 +5,13 @@ import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.northmeter.equipmentcloud.I.I_ShowProgectList;
 import com.northmeter.equipmentcloud.R;
 import com.northmeter.equipmentcloud.base.BaseActivity;
-import com.northmeter.equipmentcloud.bean.ProgectListResponse;
 import com.northmeter.equipmentcloud.fragment.Fragment_ProgectList;
 import com.northmeter.equipmentcloud.presenter.ProgectListPresenter;
 import com.northmeter.equipmentcloud.widget.EmptyFragmentPagerAdapter;
@@ -41,6 +41,7 @@ public class ProgectListActivity extends BaseActivity {
     private List<Fragment> fragments = new ArrayList<>();
     private String[] mTitles;
     private EmptyFragmentPagerAdapter adapter;
+    private long exitTime;
 
     @Override
     protected int getLayoutId() {
@@ -56,15 +57,15 @@ public class ProgectListActivity extends BaseActivity {
     public void setTitle() {
         super.setTitle();
         tvToolbarTitle.setText("项目列表");
-        tvRightText.setText("下一步");
+        //tvRightText.setText("下一步");
     }
 
     @Override
     public void initData() {
         super.initData();
-        fragments.add(Fragment_ProgectList.newInstance(0));//加载已完成项目列表
-        fragments.add(Fragment_ProgectList.newInstance(1));//加载未完成项目列表
-        mTitles = new String[]{"已完成","未完成"};
+        fragments.add(Fragment_ProgectList.newInstance(0));//加载未完成项目列表
+        fragments.add(Fragment_ProgectList.newInstance(1));//加载已完成项目列表
+        mTitles = new String[]{"未完成","已完成"};
         adapter = new EmptyFragmentPagerAdapter(getSupportFragmentManager(),fragments,mTitles);
         vpEmpty.setAdapter(adapter);
         tlEmpty.setupWithViewPager(vpEmpty);
@@ -91,6 +92,21 @@ public class ProgectListActivity extends BaseActivity {
                 goActivity(ProgectManagementActivity.class);
                 break;
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
+                showMsg("再按一次退出");
+                exitTime = System.currentTimeMillis();
+            } else {
+                finish();
+                System.exit(0);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
 }

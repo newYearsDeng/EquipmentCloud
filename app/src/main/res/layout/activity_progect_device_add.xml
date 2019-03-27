@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fitsSystemWindows="true"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_toolbar_normal_title"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbarSize="1px"
+        android:background="#F5F5F5"
+        android:scrollbarThumbVertical="@color/color_little_gray">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout style="@style/device_add_layout">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:text="设备名称" />
+
+                <EditText
+                    android:id="@+id/tv_device_name"
+                    style="@style/device_add_text_right"
+                    android:hint="请输入设备名" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_add_layout">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:text="产品类型" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:id="@+id/tv_item_type_id"
+                    style="@style/device_add_text_right"
+                    android:hint="请选择" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_add_layout">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:textColor="#9E9FA4"
+                    android:text="工控机编号" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:id="@+id/tv_ipc_number"
+                    style="@style/device_add_text_right"
+                    android:hint="请输入" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_add_layout">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:textColor="#9E9FA4"
+                    android:text="集中器名称" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:id="@+id/tv_concentrator_name"
+                    style="@style/device_add_text_right"
+                    android:hint="请输入" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_add_layout">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:textColor="#9E9FA4"
+                    android:text="采集器名称" />
+
+                <EditText
+                    android:id="@+id/tv_collector_name"
+                    style="@style/device_add_text_right"
+                    android:hint="请输入" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_add_layout">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:textColor="#9E9FA4"
+                    android:text="配置方案" />
+
+                <TextView
+                    android:id="@+id/tv_device_plan"
+                    style="@style/device_add_text_right"
+                    android:hint="请选择" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_add_layout">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:textColor="#9E9FA4"
+                    android:text="密钥" />
+
+                <EditText
+                    android:id="@+id/tv_device_secret_key"
+                    style="@style/device_add_text_right"
+                    android:hint="请输入" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_add_layout">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:textColor="#9E9FA4"
+                    android:text="端口" />
+
+                <EditText
+                    android:id="@+id/tv_device_port"
+                    style="@style/device_add_text_right"
+                    android:hint="请输入" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/btn_device_add_sure"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="40dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/selector_sure_button_add"
+                android:text="确  认"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

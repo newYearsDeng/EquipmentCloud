@@ -10,6 +10,6 @@ import java.util.List;
 
 public interface I_ShowProgectList {
     void showData(List<ProgectListResponse.PageList> datas);
-    void returnSuccess();
-    void returnFail();
+    void returnSuccess(String msg);
+    void returnFail(String msg);
 }

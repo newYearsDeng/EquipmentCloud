@@ -1,5 +1,6 @@
 package com.northmeter.equipmentcloud.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -18,14 +19,14 @@ public class RecordImportResponse extends CommonResponse{
         this.list = list;
     }
 
-    public class BuildList{
+    public class BuildList implements Serializable{
         private int recordId;
         private String buildingName;
         private int type;
         private int equipmentId;
         private int projectId;
         private String equipmentName;
-        private List child;
+        private List<BuildList> child;
 
         public int getRecordId() {
             return recordId;
@@ -79,10 +80,11 @@ public class RecordImportResponse extends CommonResponse{
             return child;
         }
 
-        public void setChild(List child) {
+        public void setChild(List<BuildList> child) {
             this.child = child;
         }
     }
+
 
 
 }

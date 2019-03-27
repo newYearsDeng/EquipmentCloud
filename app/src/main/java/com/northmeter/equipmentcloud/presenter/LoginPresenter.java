@@ -26,8 +26,8 @@ import java.util.Map;
 public class LoginPresenter implements I_LoginPresenter {
     Context context;
     I_ShowReturnData showReturnData;
-    public LoginPresenter(I_ShowReturnData showReturnData){
-        this.context = (Context) showReturnData;
+    public LoginPresenter(Context context,I_ShowReturnData showReturnData){
+        this.context = context;
         this.showReturnData = showReturnData;
     }
 
@@ -36,12 +36,10 @@ public class LoginPresenter implements I_LoginPresenter {
         Map mapList = new HashMap();
         mapList.put("userName",userName);
         mapList.put("passWord",passWord);
-
         OkGo.<LoginResponse>post(API.login)
                 .tag(this)
-                .headers("token", SaveUserInfo.getLoginUser(context).getToken())
                 .upJson(new Gson().toJson(mapList))
-                .execute(new DialogCallback<LoginResponse>((Activity)context,LoginResponse.class) {
+                .execute(new DialogCallback<LoginResponse>((Activity) context,LoginResponse.class) {
                              @Override
                              public void onSuccess(Response<LoginResponse> response) {
                                  int code = response.body().getCode();
@@ -52,16 +50,16 @@ public class LoginPresenter implements I_LoginPresenter {
                                      userInfo.setExpire(response.body().getExpire());
                                      userInfo.setToken(response.body().getToken());
                                      SaveUserInfo.saveLoginUser(context,userInfo);
-                                     showReturnData.returnSuccess(code,response.body().getMsg());
+                                     showReturnData.returnSuccess(response.body().getMsg());
                                  }else{
-                                     showReturnData.returnFail(code,response.body().getMsg());
+                                     showReturnData.returnFail(response.body().getMsg());
                                  }
                              }
 
                              @Override
                              public void onError(Response<LoginResponse> response) {
                                  super.onError(response);
-                                 showReturnData.returnFail(response.body().getCode(),response.body().getMsg());
+                                 showReturnData.returnFail("连接失败，请稍后重试");
                              }
                          }
                 );

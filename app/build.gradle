@@ -1,7 +1,19 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        equipmentcloud {
+            keyAlias 'equipmentcloud2019'
+            keyPassword 'android'
+            storeFile file('D:/Program Files (x86)/keystore/equipmentcloud.jks')
+            storePassword 'android'
+        }
+    }
     compileSdkVersion 26
+    //签名打包时检查png有异常，Androidstudio严格审查png图片，禁止Gradle检查PNG的合法性
+    aaptOptions.cruncherEnabled = false
+    aaptOptions.useNewCruncher = false
+
     defaultConfig {
         applicationId "com.northmeter.equipmentcloud"
         minSdkVersion 19
@@ -9,12 +21,16 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.equipmentcloud
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.equipmentcloud
         }
+    }
+    productFlavors {
     }
 }
 
@@ -35,7 +51,9 @@ dependencies {
     //控件绑定
     compile 'com.jakewharton:butterknife:8.7.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
-
     compile 'com.zhy:autolayout:1.4.5'
-
+    compile 'com.squareup.okhttp:okhttp:2.7.1'
+    compile 'com.alibaba:fastjson:1.2.37'
+    //evenbus
+    compile 'org.greenrobot:eventbus:3.0.0'
 }

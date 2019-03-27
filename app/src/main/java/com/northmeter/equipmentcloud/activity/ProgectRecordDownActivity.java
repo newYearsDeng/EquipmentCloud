@@ -39,6 +39,7 @@ public class ProgectRecordDownActivity extends BaseActivity {
     private List<Fragment> fragments = new ArrayList<>();
     private String[] mTitles;
     private EmptyFragmentPagerAdapter adapter;
+    private int projectId;
 
     @Override
     protected int getLayoutId() {
@@ -48,6 +49,7 @@ public class ProgectRecordDownActivity extends BaseActivity {
     @Override
     public void initIntentData() {
         super.initIntentData();
+        projectId = getIntent().getIntExtra("projectId",0);
     }
 
     @Override
@@ -59,9 +61,9 @@ public class ProgectRecordDownActivity extends BaseActivity {
     @Override
     public void initData() {
         super.initData();
-        fragments.add(Fragment_RecordDownLoadList.newInstance(0));//加载已完成项目列表
-        fragments.add(Fragment_RecordDownLoadList.newInstance(1));//加载未完成项目列表
-        mTitles = new String[]{"已完成","未完成"};
+        fragments.add(Fragment_RecordDownLoadList.newInstance(0,projectId));//加载网关
+        fragments.add(Fragment_RecordDownLoadList.newInstance(1,projectId));//加载集中器
+        mTitles = new String[]{"网关","集中器"};
         adapter = new EmptyFragmentPagerAdapter(getSupportFragmentManager(),fragments,mTitles);
         vpEmpty.setAdapter(adapter);
         tlEmpty.setupWithViewPager(vpEmpty);

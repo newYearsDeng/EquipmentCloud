@@ -29,7 +29,7 @@
     <application
         android:name=".base.MyApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/app_logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -48,11 +48,27 @@
         <activity android:name=".activity.LoginActivity"/>
         <activity android:name=".activity.MainActivity"/>
         <activity android:name=".activity.ProgectListActivity"/>
-        <activity android:name=".activity.ProgectManagementActivity"/>
-        <activity android:name=".activity.ProgectRecordDownActivity"/>
-        <activity android:name=".activity.ProgectRecordImportActivity"/>
+        <activity android:name=".activity.ProgectBuildListActivity"/>
+        <activity android:name=".activity.ProgectBuildDeviceActivity"/>
+        <activity android:name=".activity.ProgectDeviceAddActivity"/>
+        <activity android:name=".activity.ProgectBuildDeviceDetailActivity"/>
         <activity android:name=".activity.ProgectSelfCheckingActivity"/>
         <activity android:name=".activity.ProgectSelfCheckingResultActivity"/>
+        <activity android:name=".activity.ProgectSelfCheckingDeviceResultActivity"/>
+        <activity android:name=".activity.LocationSet_NBDevice"/>
+        <activity android:name=".activity.WaterMeterPictureShow"/>
+        <activity android:name=".bluetooth.bt_bluetooth.BtDeviceListActivity"/>
+
+
+        <activity android:name=".bluetooth.bluetooth.blueActivity.Blue_MainActivity"/>
+        <activity android:name=".bluetooth.bt_bluetooth.BTMainActivity"/>
+
+
+        <activity android:name=".activity.ProgectManagementActivity"/>
+        <activity android:name=".activity.ProgectRecordDownActivity"/>
+        <activity android:name=".activity.ProgectRecordImportActivity"
+            android:windowSoftInputMode="stateHidden|stateUnchanged"/>
+
 
         <!--二维码扫描-->
         <activity

@@ -11,9 +11,12 @@ import android.widget.TextView;
 
 import com.northmeter.equipmentcloud.I.I_ShowProgectList;
 import com.northmeter.equipmentcloud.R;
+import com.northmeter.equipmentcloud.activity.ProgectBuildListActivity;
+import com.northmeter.equipmentcloud.activity.ProgectManagementActivity;
 import com.northmeter.equipmentcloud.adapter.CommonAdapter;
 import com.northmeter.equipmentcloud.adapter.ViewHolder;
 import com.northmeter.equipmentcloud.base.BaseFragment;
+import com.northmeter.equipmentcloud.base.Constants;
 import com.northmeter.equipmentcloud.bean.CommonResponse;
 import com.northmeter.equipmentcloud.bean.ProgectListResponse;
 import com.northmeter.equipmentcloud.presenter.ProgectListPresenter;
@@ -64,8 +67,8 @@ public class Fragment_ProgectList extends BaseFragment implements I_ShowProgectL
 
     @Override
     protected void finishCreateView(Bundle savedInstanceState) {
-        progectListPresenter = new ProgectListPresenter(this);
-        progectListPresenter.getProgectList(getType,"0","0");
+        progectListPresenter = new ProgectListPresenter(getActivity(),this);
+        progectListPresenter.getProgectList(getType);
         initListView();
     }
 
@@ -88,12 +91,15 @@ public class Fragment_ProgectList extends BaseFragment implements I_ShowProgectL
             @Override
             public void convert(ViewHolder helper, ProgectListResponse.PageList item) {
                 if (getType == 0){
-                    helper.getImageViewSet(R.id.iv_left_item,R.color.color_already);
-                }else{
                     helper.getImageViewSet(R.id.iv_left_item,R.color.color_noalready);
+                }else{
+                    helper.getImageViewSet(R.id.iv_left_item,R.color.color_already);
                 }
                 helper.getTextViewSet(R.id.tv_progrect_name, item.getProjectName());
-                helper.getTextViewSet(R.id.tv_progrect_founder, item.getPrincipalMsg().get(0).getPersonName());
+                helper.getTextViewSet(R.id.tv_progrect_unregister, String.valueOf(item.getEquipmentUnregistCount()));
+                helper.getTextViewSet(R.id.tv_progrect_unactivate, String.valueOf(item.getEquipmentUnactivateCount()));
+                helper.getTextViewSet(R.id.tv_progrect_equipment_count_1, "/"+item.getEquipmentCount()+"个");
+                helper.getTextViewSet(R.id.tv_progrect_equipment_count_2, "/"+item.getEquipmentCount()+"个");
                 helper.getTextViewSet(R.id.tv_progrect_time,item.getCreateTime());
             }
         };
@@ -103,24 +109,38 @@ public class Fragment_ProgectList extends BaseFragment implements I_ShowProgectL
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ProgectListResponse.PageList pageList = datas.get(position);
-                int recordId = pageList.getRecordId();
+                progectListPresenter.getConfigurationPlan(pageList.getProjectName());
+
+                Intent intent = new Intent(getActivity(),ProgectBuildListActivity.class);
+                intent.putExtra("projectId",pageList.getRecordId());
+                intent.putExtra("projectName",pageList.getProjectName());
+                intent.putExtra("buildName",pageList.getProjectName());
+                intent.putExtra("recordId",0);
+                startActivity(intent);
+
+
             }
         });
     }
 
     @Override
     public void showData(List<ProgectListResponse.PageList> datas) {
-        this.datas = datas;
+        this.datas.clear();
+        this.datas.addAll(datas);
         commonAdapter.notifyDataSetChanged();
+        if(datas.isEmpty()){
+            tvEmpty.setVisibility(View.VISIBLE);
+        }
+
     }
 
     @Override
-    public void returnSuccess() {
-
+    public void returnSuccess(String msg) {
+        showMsg(msg);
     }
 
     @Override
-    public void returnFail() {
-
+    public void returnFail(String msg) {
+        showMsg(msg);
     }
 }

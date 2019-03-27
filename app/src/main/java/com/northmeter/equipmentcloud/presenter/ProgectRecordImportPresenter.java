@@ -25,14 +25,14 @@ public class ProgectRecordImportPresenter implements I_ProgectRecordImportPresen
     Context context;
     private I_ShowRecordImport showRecordImport;
 
-    public ProgectRecordImportPresenter(I_ShowRecordImport showRecordImport){
-        this.showRecordImport = showRecordImport;
-        this.context = (Context) showRecordImport;
+    public ProgectRecordImportPresenter(Context context){
+        this.showRecordImport = (I_ShowRecordImport) context;
+        this.context = context;
     }
 
     @Override
-    public void getRecordImportList(int projectId) {
-        OkGo.<RecordImportResponse>post(API.getBuildList)
+    public void getRecordImportBuildList(int projectId) {
+        OkGo.<RecordImportResponse>get(API.getBuildList)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .cacheKey("RecordImportList")
@@ -44,20 +44,20 @@ public class ProgectRecordImportPresenter implements I_ProgectRecordImportPresen
                                  if(response.body().getCode() == 0){
                                      showRecordImport.showData(response.body().getList());
                                  }else{
-                                     showRecordImport.returnFail();
+                                     showRecordImport.returnFail(response.body().getMsg());
                                  }
                              }
 
                              @Override
                              public void onCacheSuccess(Response<RecordImportResponse> response) {
                                  super.onCacheSuccess(response);
-                                 showRecordImport.showData(response.body().getList());
+                                 //showRecordImport.showData(response.body().getList());
                              }
 
                              @Override
                              public void onError(Response<RecordImportResponse> response) {
                                  super.onError(response);
-                                 showRecordImport.returnFail();
+                                 showRecordImport.returnFail(response.toString());
                              }
                          }
                 );
@@ -65,15 +65,15 @@ public class ProgectRecordImportPresenter implements I_ProgectRecordImportPresen
 
 
     @Override
-    public void saveProgectRecord(String equipmentName, String equipmentId, int itemTypeId,
-                                  String address, int projectId) {
+    public void saveProgectRecord(int projectId,int recordId , String equipmentName, String equipmentId, String itemTypeId,
+                                  String equipmentAddress) {
         Map mapList = new HashMap();
-        mapList.put("equipmentName",equipmentName);
-        mapList.put("equipmentId",equipmentId);
-        mapList.put("itemTypeId",itemTypeId);
-        mapList.put("itemTypeId",address);
-        mapList.put("itemTypeId",projectId);
-
+        mapList.put("recordId",recordId);//建筑设备维系表Id
+        mapList.put("equipmentName",equipmentName);//设备名称
+        mapList.put("equipmentId",equipmentId);//设备编号
+        mapList.put("itemTypeId",itemTypeId);//产品型号ID
+        mapList.put("equipmentAddress",equipmentAddress);//设备安装地址，是地址字符串的拼接
+        mapList.put("projectId",projectId);//项目ID
         OkGo.<RecordImportResponse>post(API.saveEquipmentRecord)
                 .tag(this)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
@@ -82,22 +82,17 @@ public class ProgectRecordImportPresenter implements I_ProgectRecordImportPresen
                              @Override
                              public void onSuccess(Response<RecordImportResponse> response) {
                                  if(response.body().getCode() == 0){
-                                     showRecordImport.showData(response.body().getList());
+                                     showRecordImport.returnSuccess(response.body().getMsg());
                                  }else{
-                                     showRecordImport.returnFail();
+                                     showRecordImport.returnFail(response.body().getMsg());
                                  }
                              }
 
-                             @Override
-                             public void onCacheSuccess(Response<RecordImportResponse> response) {
-                                 super.onCacheSuccess(response);
-                                 showRecordImport.showData(response.body().getList());
-                             }
 
                              @Override
                              public void onError(Response<RecordImportResponse> response) {
                                  super.onError(response);
-                                 showRecordImport.returnFail();
+                                 showRecordImport.returnFail(response.toString());
                              }
                          }
                 );

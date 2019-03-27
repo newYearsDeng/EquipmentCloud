@@ -15,9 +15,9 @@
 
     <LinearLayout
         android:background="@color/white"
-        android:paddingTop="18dp"
-        android:paddingBottom="18dp"
-        android:paddingLeft="18dp"
+        android:paddingTop="17dp"
+        android:paddingBottom="14dp"
+        android:paddingLeft="17dp"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -34,23 +34,106 @@
             android:maxLines="1"
             tools:text="麦希设备云平台"
             />
-        <TextView
-            android:id="@+id/tv_progrect_founder"
+        <LinearLayout
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
-            android:layout_marginTop="20dp"
-            android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:gravity="left|center_vertical"
-            android:textColor="@color/color_hide"
-            android:textSize="13sp"
-            android:maxLines="1"
-            tools:text="创建人：xxx"
-            />
+            android:layout_height="0dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/icon_register"/>
+            <LinearLayout
+                android:layout_marginLeft="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="left|center_vertical"
+                    android:textColor="#4C4C4C"
+                    android:textSize="13sp"
+                    android:maxLines="1"
+                    android:text="未注册：" />
+                <TextView
+                    android:id="@+id/tv_progrect_unregister"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="left|center_vertical"
+                    android:textColor="#DC4F4F"
+                    android:textSize="15sp"
+                    android:maxLines="1"
+                    tools:text="100" />
+                <TextView
+                    android:id="@+id/tv_progrect_equipment_count_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="left|center_vertical"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:maxLines="1"
+                    tools:text="/1000" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/icon_activation"/>
+            <LinearLayout
+                android:layout_marginLeft="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="left|center_vertical"
+                    android:textColor="#4C4C4C"
+                    android:textSize="13sp"
+                    android:maxLines="1"
+                    android:text="未激活：" />
+                <TextView
+                    android:id="@+id/tv_progrect_unactivate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="left|center_vertical"
+                    android:textColor="#DC4F4F"
+                    android:textSize="15sp"
+                    android:maxLines="1"
+                    tools:text="100" />
+                <TextView
+                    android:id="@+id/tv_progrect_equipment_count_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="left|center_vertical"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:maxLines="1"
+                    tools:text="/1000" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
         android:background="@color/white"
-        android:paddingRight="18dp"
+        android:paddingRight="17dp"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.8"
@@ -63,7 +146,7 @@
             android:layout_gravity="center_vertical"
             android:gravity="right|center_vertical"
             android:textColor="@color/color_hide"
-            android:textSize="13sp"
+            android:textSize="14sp"
             android:maxLines="1"
             tools:text="2019/01/02"/>
     </LinearLayout>

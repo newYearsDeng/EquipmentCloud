@@ -7,5 +7,9 @@ package com.northmeter.equipmentcloud.I;
 public interface I_ProgectListPresenter {
     //page 	页码  询全部，统一传0
     //limit 条数  查询全部，统一传0
-    void getProgectList(int status,String page,String limit);
+    void getProgectList(int status);
+
+    void downloadFiles(String url,String name);
+
+    void getConfigurationPlan(String projectName);
 }

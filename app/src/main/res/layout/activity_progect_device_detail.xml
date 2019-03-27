@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fitsSystemWindows="true"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_toolbar_normal_title"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbarSize="1px"
+        android:background="#F5F5F5"
+        android:scrollbarThumbVertical="@color/color_little_gray">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout style="@style/device_detail_layout">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:text="产品型号" />
+
+                <TextView
+                    android:id="@+id/tv_device_type"
+                    style="@style/device_detail_text_right"
+                    tools:text="产品型号" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                style="@style/device_detail_layout"
+                android:layout_marginTop="1dp">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:text="设备编号" />
+
+                <TextView
+                    android:id="@+id/tv_device_number"
+                    style="@style/device_detail_text_right"
+                    tools:text="设备编号" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_detail_layout"
+                android:layout_marginTop="1dp">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:text="设备名称" />
+
+                <TextView
+                    android:id="@+id/tv_device_name"
+                    style="@style/device_detail_text_right"
+                    tools:text="设备名称" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_detail_layout"
+                android:layout_marginTop="1dp"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:text="产品大类" />
+
+                <TextView
+                    android:id="@+id/tv_big_cate_name"
+                    style="@style/device_detail_text_right"
+                    tools:text="产品大类" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_detail_layout"
+                android:layout_marginTop="1dp"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:text="产品小类" />
+
+                <TextView
+                    android:id="@+id/tv_small_cate_name"
+                    style="@style/device_detail_text_right"
+                    tools:text="产品小类" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_detail_layout"
+                android:layout_marginTop="1dp"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:text="能源类型" />
+
+                <TextView
+                    android:id="@+id/tv_measure_category_name"
+                    style="@style/device_detail_text_right"
+                    tools:text="能源类型" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_detail_layout"
+                android:layout_marginTop="1dp">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:text="集中器名称" />
+
+                <TextView
+                    android:id="@+id/tv_concentrator_name"
+                    style="@style/device_detail_text_right"
+                    tools:text="集中器名称" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_detail_layout"
+                android:layout_marginTop="1dp">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:text="采集器名称" />
+
+                <TextView
+                    android:id="@+id/tv_collector_name"
+                    style="@style/device_detail_text_right"
+                    tools:text="采集器名称" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_detail_layout"
+                android:layout_marginTop="1dp">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:text="注册状态" />
+
+                <TextView
+                    android:id="@+id/tv_activation_mode"
+                    style="@style/device_detail_text_right"
+                    tools:text="注册状态" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_detail_layout"
+                android:layout_marginTop="1dp">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:text="激活状态" />
+
+                <TextView
+                    android:id="@+id/tv_used_state"
+                    style="@style/device_detail_text_right"
+                    tools:text="激活状态" />
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/btn_get_local_picture"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/selector_sure_button_add"
+                    android:text="查询本地图片"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+                <Button
+                    android:id="@+id/btn_get_network_picture"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/selector_sure_button_add"
+                    android:text="查询网络图片"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:padding="10dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/btn_set_xy_para"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/selector_sure_button_add"
+                    android:text="坐标参数设置"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+                <Button
+                    android:id="@+id/btn_set_local_para"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/selector_sure_button_add"
+                    android:text="本地参数设置"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

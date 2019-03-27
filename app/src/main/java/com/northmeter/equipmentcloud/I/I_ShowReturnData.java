@@ -5,6 +5,6 @@ package com.northmeter.equipmentcloud.I;
  */
 
 public interface I_ShowReturnData {
-    void returnSuccess(int code,String message);
-    void returnFail(int code,String message);
+    void returnSuccess(String message);
+    void returnFail(String message);
 }
