@@ -178,7 +178,7 @@ public class DragScaleViewTimeing extends View implements View.OnTouchListener {
                 System.out.println("rect.right:"+rect.right);
                 System.out.println("rect.bottom:"+rect.bottom);
                 notifeXY.notifeXY(rect.left*320/screenWidth,rect.top*240/screenHeight,
-                        Math.round(((rect.right-rect.left)*320/screenWidth)/40)*40,//取整
+                        (int)Math.ceil(((double)((rect.right-rect.left)*320/screenWidth)/40))*40,//取最大值
                         Math.round((rect.bottom-rect.top)*240/screenHeight));
                 break;
         }

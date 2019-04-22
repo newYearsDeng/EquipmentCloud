@@ -54,10 +54,11 @@ public abstract  class BaseFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-         unbinder = ButterKnife.bind(this, view);
+        context = getActivity();
+        unbinder = ButterKnife.bind(this, view);
         //初始化控件
         finishCreateView(savedInstanceState);
-        context = getActivity();
+
     }
 
 
@@ -94,6 +95,7 @@ public abstract  class BaseFragment extends Fragment {
     protected void startLoadingDialog(){
         mLoadingDialog = new LoadingDialog(context);
         mLoadingDialog.setLoadingText("加载中,请稍后...");
+        mLoadingDialog.setInterceptBack(false);
         mLoadingDialog.show();
 
         TimerTask timerTask = new TimerTask() {

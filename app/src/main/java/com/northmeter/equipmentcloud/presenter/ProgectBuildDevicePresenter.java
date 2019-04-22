@@ -2,6 +2,8 @@ package com.northmeter.equipmentcloud.presenter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 
 import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
@@ -17,6 +19,7 @@ import com.northmeter.equipmentcloud.bean.ProgectBuildListResponse;
 import com.northmeter.equipmentcloud.http.DialogCallback;
 import com.northmeter.equipmentcloud.utils.SaveUserInfo;
 import com.northmeter.equipmentcloud.utils.Udp_Help;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by dyd on 2019/2/28.
@@ -36,6 +41,9 @@ public class ProgectBuildDevicePresenter implements I_ProgectBuildDevicePresente
 
     private Context context;
     private I_ShowBuildDevice showBuildDevice;
+    private LoadingDialog mLoadingDialog;
+    private Timer timer;
+    private TimerTask timerTask;
 
     public ProgectBuildDevicePresenter(Context context){
         this.context = context;
@@ -211,7 +219,7 @@ public class ProgectBuildDevicePresenter implements I_ProgectBuildDevicePresente
     public String loadFromSDFile(String path,String fileName) {
         String result = "";
         try {
-            File file=new File(path+fileName);
+            File file=new File(path+"/"+fileName);
             if(!file.exists()){
                 result = null;
             }else{
@@ -251,39 +259,48 @@ public class ProgectBuildDevicePresenter implements I_ProgectBuildDevicePresente
      上报间隔分钟=5
      随机退避时间=5
      拍照时间=12:00*/
-    public String getFilesInfo(String equipmentId ,String fileName,int state){
-        String result = loadFromSDFile(Constants.filePath,fileName);
-        if(result==null){
+    public String getFilesInfo(int projectId,String equipmentId ,String fileName,int state){
+        String result = loadFromSDFile(Constants.filePath+projectId,fileName);
+        if(result==null||result==""||result.equals("")){
             showBuildDevice.returnFail("文件不存在，请返回项目列表重新加载");
         }else{
-            String[] infoList = result.split("\n");
-            if(infoList.length>=15){
-                if(state == 0 ){
-                    String etExposureTime = infoList[0].split("=")[1];
-                    String tvExposureSetting = infoList[1].split("=")[1];
-                    String etCoordinateX = infoList[2].split("=")[1];
-                    String etCoordinateY = infoList[3].split("=")[1];
-                    String etCoordinateXlong = infoList[4].split("=")[1];
-                    String etCoordinateYlong = infoList[5].split("=")[1];
-                    String etContrastRatio = infoList[6].split("=")[1];
-                    String etCompressionRatio = infoList[7].split("=")[1];
-                    String tvFlashState = infoList[8].split("=")[1];
-                    String sendStr = get_setting(equipmentId,etExposureTime,tvExposureSetting ,  tvFlashState , etCoordinateX, etCoordinateY,
-                            etCoordinateXlong, etCoordinateYlong, etContrastRatio, etCompressionRatio);
-                    return sendStr;
-                }else{
-                    String reportingDatas = infoList[8].split("=")[1];
-                    String tvReportingDate = infoList[10].split("=")[1];
-                    String tvReportingTime = infoList[11].split("=")[1];
-                    String etSpaceTime = infoList[12].split("=")[1];
-                    String etRandomTime = infoList[13].split("=")[1];
-                    String tvPhotoTime = infoList[14].split("=")[1];
+            try{
+                String[] infoList = result.split("\n");
+                if(infoList.length>=15){
+                    if(state == 0 ){
+                        String etExposureTime = infoList[0].split("=")[1];
+                        String tvExposureSetting = infoList[1].split("=")[1];
+                        String etCoordinateX = infoList[2].split("=")[1];
+                        String etCoordinateY = infoList[3].split("=")[1];
+                        String etCoordinateXlong = infoList[4].split("=")[1];
+                        String etCoordinateYlong = infoList[5].split("=")[1];
+                        String etContrastRatio = infoList[6].split("=")[1];
+                        String etCompressionRatio = infoList[7].split("=")[1];
+                        String tvFlashState = infoList[8].split("=")[1];
+                        String sendStr = get_setting(equipmentId,etExposureTime,tvExposureSetting,tvFlashState,etCoordinateX,etCoordinateY,
+                                etCoordinateXlong, etCoordinateYlong, etContrastRatio, etCompressionRatio);
+                        System.out.println("sendStr:"+sendStr);
+                        return sendStr;
+                    }else{
+                        String reportingDatas = infoList[9].split("=")[1];
+                        String tvReportingDate = infoList[10].split("=")[1];
+                        String tvReportingTime = infoList[11].split("=")[1];
+                        String etSpaceTime = infoList[12].split("=")[1];
+                        String etRandomTime = infoList[13].split("=")[1];
+                        String tvPhotoTime = infoList[14].split("=")[1];
 
-                    String sendStr = get_TimeSet(equipmentId ,  reportingDatas, tvReportingDate, tvReportingTime,
-                            etSpaceTime, etRandomTime, tvPhotoTime);
-                    return sendStr;
+                        String sendStr = get_TimeSet(equipmentId ,  reportingDatas, tvReportingDate, tvReportingTime,
+                                etSpaceTime, etRandomTime, tvPhotoTime);
+                        System.out.println("sendStr:"+sendStr);
+                        return sendStr;
+                    }
                 }
+            }catch(Exception e){
+                e.printStackTrace();
+                showBuildDevice.returnFail("配置文件中设置参数有误，解析无效");
+                return null;
             }
+
         }
         return null;
     }
@@ -382,5 +399,39 @@ public class ProgectBuildDevicePresenter implements I_ProgectBuildDevicePresente
         String sendMsg = "FEFEFEFE" + para + cs;
         System.out.println("指令："+sendMsg);
         return sendMsg;
+    }
+
+
+    public void startLoadingDialog(){
+        mLoadingDialog = new LoadingDialog(context);
+        mLoadingDialog.setLoadingText("加载中,请稍后...");
+        mLoadingDialog.setInterceptBack(false);
+        mLoadingDialog.show();
+
+        timer = new Timer();
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                handeler.sendEmptyMessage(0);
+            }
+        };
+        timer.schedule(timerTask,20000);
+    }
+
+    Handler handeler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            mLoadingDialog.close();
+        }
+    };
+
+    public void stopLoadingDialog(){
+        if(mLoadingDialog==null){
+            mLoadingDialog = new LoadingDialog(context);
+        }
+        timerTask.cancel();
+        timer.cancel();
+        mLoadingDialog.close();
     }
 }

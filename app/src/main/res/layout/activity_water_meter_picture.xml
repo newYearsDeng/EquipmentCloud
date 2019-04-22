@@ -28,6 +28,7 @@
                 android:focusableInTouchMode="true">
                 <LinearLayout
                     android:gravity="center|left"
+                    android:layout_gravity="center"
                     android:paddingTop="10px"
                     android:paddingBottom="10px"
                     android:background="#5DAECA"
@@ -36,8 +37,9 @@
 
                     <EditText
                         android:id="@+id/connect_flag"
-                        android:layout_width="160dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="45dp"
                         android:gravity="center"
                         android:editable="false"
                         android:text="蓝牙未连接"
@@ -46,8 +48,9 @@
 
                     <EditText
                         android:id="@+id/edittext_tablenum"
-                        android:layout_width="160dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="45dp"
                         android:gravity="center"
                         android:text="012016000021"
                         android:hint="请输入表号"
@@ -71,7 +74,7 @@
                         android:id="@+id/image_camera_show"
                         android:layout_width="320dp"
                         android:layout_height="240dp"
-                        android:scaleType="fitStart"
+                        android:scaleType="fitCenter"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentTop="true" />
                 </RelativeLayout>
@@ -85,12 +88,14 @@
                       android:textSize="17sp"
                       android:textColor="@color/white"
                       android:layout_width="match_parent"
-                      android:layout_height="40dp"
+                      android:layout_height="45dp"
                       android:gravity="center"
                       tools:text="0.00"/>
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/layout_local"
+                    android:visibility="gone"
                     android:layout_width="320dp"
                     android:layout_height="wrap_content">
                     <Button
@@ -121,6 +126,22 @@
                         android:textSize="15sp"
                         android:textColor="@color/white" />
                 </LinearLayout>
+
+
+                <Button
+                    android:id="@+id/button_get_network_picture"
+                    android:visibility="gone"
+                    android:layout_width="320dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:background="@drawable/selector_sure_button_bg"
+                    android:ems="10"
+                    android:text="刷新图片"
+                    android:imeOptions="flagNoFullscreen"
+                    android:inputType="textPersonName"
+                    android:textSize="15sp"
+                    android:textColor="@color/white" />
 
             </LinearLayout>
 

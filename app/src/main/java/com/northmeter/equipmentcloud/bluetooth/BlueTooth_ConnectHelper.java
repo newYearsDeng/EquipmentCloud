@@ -38,9 +38,16 @@ public class BlueTooth_ConnectHelper implements IShowSMainMessage {
 
     private static BlueTooth_ConnectHelper uniqueInstance=null;
 
+    private static String mConnectedDeviceName;
+
+    /**bt蓝牙是否连接成功*/
+    private static boolean booleanConnected = false;
+
     public BlueTooth_ConnectHelper() {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mChatService = new BluetoothChatService(MyApplication.getContext(), btHandler);
+        booleanConnected = false;
+        mConnectedDeviceName = "No Connected";
     }
 
     public static BlueTooth_ConnectHelper getInstance() {
@@ -58,23 +65,6 @@ public class BlueTooth_ConnectHelper implements IShowSMainMessage {
          mChatService.connect(device);
     }
 
-
-    public BluetoothAdapter getmBluetoothAdapter() {
-        return mBluetoothAdapter;
-    }
-
-    public void setmBluetoothAdapter(BluetoothAdapter mBluetoothAdapter) {
-        this.mBluetoothAdapter = mBluetoothAdapter;
-    }
-
-    public BluetoothChatService getmChatService() {
-        return mChatService;
-    }
-
-    public void setmChatService(BluetoothChatService mChatService) {
-        this.mChatService = mChatService;
-    }
-
     private Handler btHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -84,24 +74,32 @@ public class BlueTooth_ConnectHelper implements IShowSMainMessage {
                     switch (msg.arg1) {
                         case BluetoothChatService.STATE_CONNECTED:
                             System.out.println("连接成功");
-                            BlueTooth_UniqueInstance.getInstance().setBooleanConnected(true);
+                            setBooleanConnected(true);
                             setmChatService(mChatService);
+
+                            sendEventBus(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName(), "蓝牙连接成功");
+
+                            int state = BlueTooth_UniqueInstance.getInstance().getState();
+                            if(state == 20||state == 24||state==26){
+                                sendEventBus(EvenBusEnum.EvenBus_BuildDevice.getEvenName(), "success");
+                            }
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
+                            setmConnectedDeviceName("连接中");
                             System.out.println("连接中");
-                            //dataChange.setDataChange("连接中...");
                             break;
                         case BluetoothChatService.STATE_LISTEN:
                             break;
                         case BluetoothChatService.STATE_NONE:
-                            BlueTooth_UniqueInstance.getInstance().setBooleanConnected(false);
+                            setBooleanConnected(false);
+                            setmConnectedDeviceName("连接失败");
+                            sendEventBus(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName(), "连接蓝牙失败");
                             System.out.println("连接失败");
-                            //showMsg("连接失败");
-                            //dataChange.setDataChange("连接失败");
                             break;
                         case BluetoothChatService.STATE_STOP:
-                            BlueTooth_UniqueInstance.getInstance().setBooleanConnected(false);
-                            //dataChange.setDataChange("断开连接");
+                            setBooleanConnected(false);
+                            setmConnectedDeviceName("连接断开");
+                            sendEventBus(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName(), "蓝牙连接断开");
                             System.out.println("断开连接");
                             break;
                     }
@@ -126,6 +124,13 @@ public class BlueTooth_ConnectHelper implements IShowSMainMessage {
                                 case 10:
                                     sendEventBus(EvenBusEnum.EvenBus_WaterMeterPicShow.getEvenName(), message);
                                     break;
+                                case 21:
+                                case 22:
+                                case 23:
+                                case 25:
+                                    sendEventBus(EvenBusEnum.EvenBus_BuildDevice.getEvenName(), message);
+                                    break;
+
                             }
                         }
 
@@ -137,12 +142,14 @@ public class BlueTooth_ConnectHelper implements IShowSMainMessage {
                     break;
                 case MESSAGE_DEVICE_NAME:
                     //save the connected device's name
-                    String  mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
+                    mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
                     System.out.println(mConnectedDeviceName);
                     break;
                 case MESSAGE_TOAST://连接丢失
-                    BlueTooth_UniqueInstance.getInstance().setBooleanConnected(false);
+                    setBooleanConnected(false);
+                    setmConnectedDeviceName("连接断开");
                     System.out.println("连接断开");
+                    sendEventBus(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName(), "蓝牙连接断开");
                     //dataChange.setDataChange("连接断开");
                     //showMsg(msg.getData().getString(TOAST));
                     break;
@@ -165,5 +172,37 @@ public class BlueTooth_ConnectHelper implements IShowSMainMessage {
     @Override
     public void showSettingMsg(String message) {
 
+    }
+
+    public BluetoothAdapter getmBluetoothAdapter() {
+        return mBluetoothAdapter;
+    }
+
+    public void setmBluetoothAdapter(BluetoothAdapter mBluetoothAdapter) {
+        this.mBluetoothAdapter = mBluetoothAdapter;
+    }
+
+    public BluetoothChatService getmChatService() {
+        return mChatService;
+    }
+
+    public void setmChatService(BluetoothChatService mChatService) {
+        this.mChatService = mChatService;
+    }
+
+    public static boolean isBooleanConnected() {
+        return booleanConnected;
+    }
+
+    public static void setBooleanConnected(boolean booleanConnected) {
+        BlueTooth_ConnectHelper.booleanConnected = booleanConnected;
+    }
+
+    public static String getmConnectedDeviceName() {
+        return mConnectedDeviceName;
+    }
+
+    public static void setmConnectedDeviceName(String mConnectedDeviceName) {
+        BlueTooth_ConnectHelper.mConnectedDeviceName = mConnectedDeviceName;
     }
 }

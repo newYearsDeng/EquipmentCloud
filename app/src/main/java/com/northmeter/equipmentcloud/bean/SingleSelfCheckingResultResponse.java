@@ -21,18 +21,18 @@ public class SingleSelfCheckingResultResponse extends CommonResponse{
     }
 
     public class ResultBean implements Serializable{
-        private int implementResult ;//	Int 	任务执行结果
+        private String implementResult ;//	任务执行结果
         private String installAddress ;//	String 	设备的地址
         private String equipmentName ;//	String 	设备名称
         private String imageUrl ;//	String 	图片地址url
         private double dataValue ;//double 	识别的值
         private String endTime ;//	String 	任务结束时间
 
-        public int getImplementResult() {
+        public String getImplementResult() {
             return implementResult;
         }
 
-        public void setImplementResult(int implementResult) {
+        public void setImplementResult(String implementResult) {
             this.implementResult = implementResult;
         }
 

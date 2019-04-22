@@ -2,28 +2,27 @@ package com.northmeter.equipmentcloud.activity;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.northmeter.equipmentcloud.I.I_ShowDeviceDetail;
 import com.northmeter.equipmentcloud.R;
 import com.northmeter.equipmentcloud.base.BaseActivity;
+import com.northmeter.equipmentcloud.bean.EvenBusBean;
 import com.northmeter.equipmentcloud.bean.ProgectDeviceDetailResponse;
 import com.northmeter.equipmentcloud.bluetooth.BlueTooth_ConnectHelper;
-import com.northmeter.equipmentcloud.bluetooth.bluetooth.blueActivity.DeviceListActivity;
-import com.northmeter.equipmentcloud.bluetooth.bluetooth.tools.BluetoothConnectionClient;
-import com.northmeter.equipmentcloud.bluetooth.bt_bluetooth.BluetoothChatService;
 import com.northmeter.equipmentcloud.bluetooth.bt_bluetooth.BtDeviceListActivity;
+import com.northmeter.equipmentcloud.enumBean.EvenBusEnum;
 import com.northmeter.equipmentcloud.presenter.ProgectBuildDeviceDetailPresenter;
 
-import java.util.List;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -58,16 +57,24 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
     TextView tvActivationMode;
     @BindView(R.id.tv_used_state)
     TextView tvUsedState;
+    @BindView(R.id.btn_get_local_picture)
+    Button btnGetLocalPicture;
+    @BindView(R.id.btn_get_network_picture)
+    Button btnGetNetworkPicture;
+    @BindView(R.id.btn_set_xy_para)
+    Button btnSetXyPara;
+    @BindView(R.id.btn_set_local_para)
+    Button btnSetLocalPara;
 
     private final static int FIND_BLUETOOTH_CODE = 1;
     private static final int REQUEST_CONNECT_DEVICE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
-    private BluetoothAdapter mBluetoothAdapter = null;
 
+    private BluetoothAdapter mBluetoothAdapter = null;
     private String TAG = getClass().getSimpleName();
     private ProgectBuildDeviceDetailPresenter progectBuildDeviceDetailPresenter;
     private int projectId,recordId;
-    private String equipmentId,equipmentName;
+    private String equipmentNum, itemTypeId, equipmentName;
     private Intent intent;
 
     @Override
@@ -81,17 +88,31 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void initIntentData() {
         super.initIntentData();
-//        projectId = getIntent().getIntExtra("projectId",0);
-//        recordId = getIntent().getIntExtra("recordId",0);
-//        equipmentId = getIntent().getStringExtra("equipmentId");
-//        equipmentName = getIntent().getStringExtra("equipmentName");
+        projectId = getIntent().getIntExtra("projectId", 0);
+        recordId = getIntent().getIntExtra("recordId", 0);
+        equipmentNum = getIntent().getStringExtra("equipmentNum");
+        itemTypeId = getIntent().getStringExtra("itemTypeId");
+        equipmentName = getIntent().getStringExtra("equipmentName");
 
         intent = new Intent();
         intent.putExtra("projectId", projectId);
-        intent.putExtra("equipmentId", equipmentId);
-        intent.putExtra("equipmentName",equipmentName);
+        intent.putExtra("equipmentNum", equipmentNum);
+        intent.putExtra("itemTypeId", itemTypeId);
+        intent.putExtra("equipmentName", equipmentName);
         intent.putExtra("recordId", recordId);
     }
 
@@ -99,22 +120,29 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
     public void setTitle() {
         super.setTitle();
         tvToolbarTitle.setText("设备详情");
-        tvRightText.setText("蓝牙");
+        if (equipmentNum == null) {
+            btnGetLocalPicture.setVisibility(View.GONE);
+            btnGetNetworkPicture.setVisibility(View.GONE);
+            btnSetXyPara.setVisibility(View.GONE);
+            btnSetLocalPara.setVisibility(View.GONE);
+        } else {
+            tvRightText.setText("蓝牙");
+        }
     }
 
     @Override
     public void initData() {
         super.initData();
         progectBuildDeviceDetailPresenter = new ProgectBuildDeviceDetailPresenter(this);
-        //progectBuildDeviceDetailPresenter.getEquipmentDetails(recordId);
+        progectBuildDeviceDetailPresenter.getEquipmentDetails(recordId);
 
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mBluetoothAdapter = BlueTooth_ConnectHelper.getInstance().getmBluetoothAdapter();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (!mBluetoothAdapter.isEnabled()) {
+        if (!mBluetoothAdapter.isEnabled()&&equipmentNum != null) {
             Intent enableIntent = new Intent(
                     BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
@@ -150,8 +178,8 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
         }
     }
 
-    @OnClick({R.id.btn_tb_back, R.id.tv_right_text,R.id.btn_get_local_picture,R.id.btn_get_network_picture,
-    R.id.btn_set_xy_para,R.id.btn_set_local_para})
+    @OnClick({R.id.btn_tb_back, R.id.tv_right_text, R.id.btn_get_local_picture, R.id.btn_get_network_picture,
+            R.id.btn_set_xy_para, R.id.btn_set_local_para})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_tb_back:
@@ -162,20 +190,32 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
                 startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
                 break;
             case R.id.btn_get_local_picture://获取本地图片
-                intent.putExtra("type", 0);
-                goActivity(WaterMeterPictureShow.class,intent);
+                if (BlueTooth_ConnectHelper.getInstance().isBooleanConnected()) {
+                    intent.putExtra("type", 0);
+                    goActivity(WaterMeterPictureShow.class, intent);
+                } else {
+                    showMsg("未连接蓝牙");
+                }
                 break;
             case R.id.btn_get_network_picture://获取网络图片
                 intent.putExtra("type", 1);
-                goActivity(WaterMeterPictureShow.class,intent);
+                goActivity(WaterMeterPictureShow.class, intent);
                 break;
             case R.id.btn_set_xy_para://设置坐标轴参数
-                intent.putExtra("type", 0);
-                goActivity(LocationSet_NBDevice.class,intent);
+                if (BlueTooth_ConnectHelper.getInstance().isBooleanConnected()) {
+                    intent.putExtra("type", 0);
+                    goActivity(LocationSet_NBDevice.class, intent);
+                } else {
+                    showMsg("未连接蓝牙");
+                }
                 break;
             case R.id.btn_set_local_para://设置本地配置参数
-                intent.putExtra("type", 1);
-                goActivity(LocationSet_NBDevice.class,intent);
+                if (BlueTooth_ConnectHelper.getInstance().isBooleanConnected()) {
+                    intent.putExtra("type", 1);
+                    goActivity(LocationSet_NBDevice.class, intent);
+                } else {
+                    showMsg("未连接蓝牙");
+                }
                 break;
         }
     }
@@ -190,7 +230,7 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
         tvMeasureCategoryName.setText(deviceInfo.getMeasureCategoryName());
         tvConcentratorName.setText(deviceInfo.getConcentratorName());
         tvCollectorName.setText(deviceInfo.getCollectorName());
-        switch (deviceInfo.getUsedState()){//注册状态 0-未注册，1-已经注册
+        switch (deviceInfo.getUsedState()) {//注册状态 0-未注册，1-已经注册
             case 0:
                 tvActivationMode.setText("未注册");
                 break;
@@ -198,7 +238,7 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
                 tvActivationMode.setText("已注册");
                 break;
         }
-        switch (deviceInfo.getActivationMode()){//激活状态 0-未激活，1—激活中，2-激活成功，3-激活失败，4，是否是可激活设备
+        switch (deviceInfo.getActivationMode()) {//激活状态 0-未激活，1—激活中，2-激活成功，3-激活失败，4，是否是可激活设备
             case 0:
                 tvUsedState.setText("未激活");
                 break;
@@ -222,6 +262,18 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
     @Override
     public void returnFail(String msg) {
         showMsg(msg);
+    }
+
+
+    /**
+     * 事件订阅者处理事件
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMoonEvent(EvenBusBean evenBusBean) {
+        String topic = evenBusBean.getTopic();
+        if (topic.equals(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName())) {
+            showMsg(evenBusBean.getData());
+        }
     }
 
 

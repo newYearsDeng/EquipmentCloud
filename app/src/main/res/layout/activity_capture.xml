@@ -105,6 +105,7 @@
                     android:layout_marginLeft="14dp"
                     android:background="@null"
                     android:inputType="text"
+                    android:maxLength="12"
                     android:textSize="16sp"
                     android:textColor="@color/white"
                     android:hint="手动输入通讯地址"

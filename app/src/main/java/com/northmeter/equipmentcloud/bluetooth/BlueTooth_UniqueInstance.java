@@ -37,11 +37,10 @@ public class BlueTooth_UniqueInstance{
     /**state判断是否结束进度条 state 0 ：表示安装测试界面的操作，1,2表示设置界面的操作，3：表示主从读取模式的拍照*/
     private int state = 0;
 
-    /**bt蓝牙是否连接成功*/
-    private static boolean booleanConnected = false;
 
 
     public BlueTooth_UniqueInstance() {
+
     }
 
     public static BlueTooth_UniqueInstance getInstance() {
@@ -76,14 +75,6 @@ public class BlueTooth_UniqueInstance{
         BlueTooth_UniqueInstance.bluetoothChatService = bluetoothChatService;
     }
 
-
-    public static boolean isBooleanConnected() {
-        return booleanConnected;
-    }
-
-    public static void setBooleanConnected(boolean booleanConnected) {
-        BlueTooth_UniqueInstance.booleanConnected = booleanConnected;
-    }
 
     public String getTableNum() {
         return tableNum;

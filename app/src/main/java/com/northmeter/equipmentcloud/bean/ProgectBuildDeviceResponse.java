@@ -30,6 +30,7 @@ public class ProgectBuildDeviceResponse extends CommonResponse {
         private String equipmentName;
         private String configurationPlanName;//配置方案的名称
         private int implementStatus;//测试状态 	0-未执行完成 1-已执行完毕
+        private int implementResult;//测试状态 	0-测试成功 1-测试失败
         private int activeStatus;//激活状态  0-未激活，1—激活中，2-激活成功，3-激活失败，4，是否是可激活设备
         private int registerStatus;//注册状态  0-未注册，1-已经注册
         private int activationMode;// 激活模式 	1-远端激活，2-近端激活
@@ -120,6 +121,14 @@ public class ProgectBuildDeviceResponse extends CommonResponse {
 
         public void setImplementStatus(int implementStatus) {
             this.implementStatus = implementStatus;
+        }
+
+        public int getImplementResult() {
+            return implementResult;
+        }
+
+        public void setImplementResult(int implementResult) {
+            this.implementResult = implementResult;
         }
 
         public int getActivationMode() {

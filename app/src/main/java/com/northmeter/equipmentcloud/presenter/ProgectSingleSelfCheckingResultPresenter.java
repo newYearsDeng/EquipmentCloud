@@ -42,8 +42,6 @@ public class ProgectSingleSelfCheckingResultPresenter implements I_ProgectSingle
     /**查询单个设备自检结果*/
     @Override
     public void getDeviceSelfCheckingResult(int recordId) {
-        Map mapList = new HashMap();
-        mapList.put("recordId",recordId);
         OkGo.<SingleSelfCheckingResultResponse>get(API.singlSeselfCheckingResult)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
@@ -72,13 +70,15 @@ public class ProgectSingleSelfCheckingResultPresenter implements I_ProgectSingle
 
     @Override
     public void downloadFiles(String Url) {
-        OkGo.<Bitmap>get(Url)
-                .tag(this)
-                .execute(new BitmapCallback() {
-                    @Override
-                    public void onSuccess(Response<Bitmap> response) {
-                        showSelfCheckingResult.showBitmap(response.body());
-                    }
-                });
+        if(Url!=null){
+            OkGo.<Bitmap>get(Url)
+                    .tag(this)
+                    .execute(new BitmapCallback() {
+                        @Override
+                        public void onSuccess(Response<Bitmap> response) {
+                            showSelfCheckingResult.showBitmap(response.body());
+                        }
+                    });
+        }
     }
 }

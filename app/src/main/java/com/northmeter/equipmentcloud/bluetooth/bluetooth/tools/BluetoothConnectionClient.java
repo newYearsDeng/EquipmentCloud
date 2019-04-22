@@ -14,6 +14,8 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.UUID;
 
+import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
+
 /**
  * Created by benjamin on 16/4/21.
  */
@@ -51,7 +53,7 @@ public class BluetoothConnectionClient {
         if(mGatt!=null){
             disconnect();
         }
-        mGatt = mDevice.connectGatt(mContext, false, mGattCallback);
+        mGatt = mDevice.connectGatt(mContext, false, mGattCallback,TRANSPORT_LE);
     }
 
     @SuppressLint("NewApi")

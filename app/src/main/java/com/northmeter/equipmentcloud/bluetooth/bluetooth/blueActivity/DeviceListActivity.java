@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +24,11 @@ import android.widget.Toast;
 import com.northmeter.equipmentcloud.R;
 import com.northmeter.equipmentcloud.bluetooth.bluetooth.tools.BluetoothScanClient;
 import com.northmeter.equipmentcloud.bluetooth.bluetooth.view.DeviceListItemView;
-import com.zhy.autolayout.AutoLayoutActivity;
 
 import java.util.ArrayList;
 
 @SuppressLint("NewApi")
-public class DeviceListActivity extends AutoLayoutActivity implements View.OnClickListener, BluetoothAdapter.LeScanCallback {
+public class DeviceListActivity extends AppCompatActivity implements View.OnClickListener, BluetoothAdapter.LeScanCallback {
     public static final String DATA_DEVICE = "DEVICE";
     String TAG = getClass().getSimpleName();
 

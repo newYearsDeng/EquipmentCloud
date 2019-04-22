@@ -34,6 +34,7 @@ import com.northmeter.equipmentcloud.base.BaseFragment;
 import com.northmeter.equipmentcloud.base.Constants;
 import com.northmeter.equipmentcloud.base.ToastUtil;
 import com.northmeter.equipmentcloud.bean.EvenBusBean;
+import com.northmeter.equipmentcloud.bluetooth.BlueTooth_ConnectHelper;
 import com.northmeter.equipmentcloud.bluetooth.BlueTooth_UniqueInstance;
 import com.northmeter.equipmentcloud.bluetooth.SendBlueMessage;
 import com.northmeter.equipmentcloud.enumBean.EvenBusEnum;
@@ -59,7 +60,7 @@ import butterknife.Unbinder;
  * NB摄像表安装测试
  */
 public class Fragment_NBMeter_Install extends BaseFragment implements DragScaleViewTimeing.NotifeXY,
-        TextWatcher,LocationSet_NBDevice.DataChange,I_ShowBlueSend,IShowAnalysisPic {
+        TextWatcher,I_ShowBlueSend,IShowAnalysisPic {
     @BindView(R.id.edittext_x)
     EditText edittextX;
     @BindView(R.id.edittext_x_long)
@@ -90,10 +91,14 @@ public class Fragment_NBMeter_Install extends BaseFragment implements DragScaleV
     private static Fragment_NBMeter_Install fragment;
     private SendBlueMessage sendBlueMessage;
     private boolean photoFlag = false;//确定是否拍照
+    private boolean compressFlag = false;//压缩率设置
+    private String compressNum = "60";
     private Map<Integer,String> map_count = new HashMap();
     private Bitmap bmp = null;//读取到的水表照片
     private String photoModel = "34EE";//34EE主动上报第一张图片；  34DD手动读取第一张图片
     private OKhttpRequest oKhttpRequest;
+    private int projectId;
+    private String equipmentNum;
 
     public static Fragment_NBMeter_Install newInstance(int getType) {
         fragment = new Fragment_NBMeter_Install();
@@ -115,9 +120,13 @@ public class Fragment_NBMeter_Install extends BaseFragment implements DragScaleV
 
     @Override
     protected void startGetArgument(Bundle savedInstanceState) {
-        ((LocationSet_NBDevice) getActivity()).setData(this);
         oKhttpRequest = new OKhttpRequest(this);
         sendBlueMessage = new SendBlueMessage(this);
+        projectId = getActivity().getIntent().getIntExtra("projectId",0);
+        equipmentNum = getActivity().getIntent().getStringExtra("equipmentNum");
+        if(equipmentNum==null){
+            equipmentNum = "000000000000";
+        }
     }
 
     @Nullable
@@ -129,13 +138,14 @@ public class Fragment_NBMeter_Install extends BaseFragment implements DragScaleV
 
     @Override
     protected void finishCreateView(Bundle savedInstanceState) {
+        connectFlag.setText(BlueTooth_ConnectHelper.getInstance().getmConnectedDeviceName());
         scaleView.setNotifeXY(this);
         relative.measure(0, 0);
         scaleView.initScreenWAndH(relative.getMeasuredWidth(), relative.getMeasuredHeight());
-        String tableNum = SharedPreferencesUtil.getPrefString(getActivity(),"BlueNumber","000000000000");
-        edittextTablenum.setText(tableNum);
+        edittextTablenum.setText(equipmentNum);
         edittextTablenum.addTextChangedListener(this);
-        BlueTooth_UniqueInstance.getInstance().setTableNum(tableNum);
+        BlueTooth_UniqueInstance.getInstance().setTableNum(equipmentNum);
+        getDefaultPic();
     }
 
     @Override
@@ -150,7 +160,6 @@ public class Fragment_NBMeter_Install extends BaseFragment implements DragScaleV
 
     @Override
     public void afterTextChanged(Editable s) {
-        SharedPreferencesUtil.setPrefString(getActivity(),"BlueNumber", edittextTablenum.getText().toString());
         BlueTooth_UniqueInstance.getInstance().setTableNum(edittextTablenum.getText().toString());
     }
 
@@ -162,13 +171,14 @@ public class Fragment_NBMeter_Install extends BaseFragment implements DragScaleV
                 oKhttpRequest.okhttpRequest(bmp,edittextTablenum.getText().toString());
                 break;
             case R.id.button_para_select://查询
-                startLoadingDialog();
-                photoFlag = true;
-                String firstpara = "68" + Udp_Help.reverseRst(edittextTablenum.getText().toString()) +
-                        "68110400383310EF";
-                String cs = Udp_Help.get_sum(firstpara).toUpperCase() + "16";
-                String last = "FEFEFEFE" + firstpara + cs;
-                sendBlueMessage.sendBTblueMessage(last,0);
+//                startLoadingDialog();
+//                photoFlag = true;
+//                String firstpara = "68" + Udp_Help.reverseRst(edittextTablenum.getText().toString()) +
+//                        "68110400383310EF";
+//                String cs = Udp_Help.get_sum(firstpara).toUpperCase() + "16";
+//                String last = "FEFEFEFE" + firstpara + cs;
+//                sendBlueMessage.sendBTblueMessage(last,0);
+                getDefaultPic();
                 break;
             case R.id.button_para_setting://设置
                 if(TextUtils.isEmpty(edittextX.getText())||TextUtils.isEmpty(edittextXLong.getText())||
@@ -189,7 +199,8 @@ public class Fragment_NBMeter_Install extends BaseFragment implements DragScaleV
                             }
                         } else {
                             startLoadingDialog();
-                            photoFlag = true;
+                            compressFlag = true;
+                            compressNum = "90";
                             String para_x = Udp_Help.reverseRst(Udp_Help.get_came_hexTo645
                                     (edittextX.getText().toString()));
                             String para_y = Udp_Help.reverseRst(Udp_Help.get_came_hexTo645
@@ -253,6 +264,9 @@ public class Fragment_NBMeter_Install extends BaseFragment implements DragScaleV
                             showMsg("操作成功");
                             if (photoFlag) {
                                 photo();
+                            }
+                            if(compressFlag){
+                                setCompress(compressNum);
                             }
                             return;
                         } else if (blueMsg.equals("fail")) {
@@ -344,6 +358,46 @@ public class Fragment_NBMeter_Install extends BaseFragment implements DragScaleV
         }
     };
 
+    private void setCompress(String compress){
+        photoFlag = true;
+        compressFlag = false;
+        String para = "68" + Udp_Help.reverseRst(edittextTablenum.getText().toString()) +
+                "68140E00393310EF" + Constants.HandlerKey + "DD"+Udp_Help.get_Stting_HexTo645(compress);
+        String cs = Udp_Help.get_sum(para).toUpperCase() + "16";
+        String sendMsg = "FEFEFEFE" + para + cs;
+        sendBlueMessage.sendBTblueMessage(sendMsg,0);
+    }
+
+    /**设置默认参数拍照*/
+    private void getDefaultPic(){
+        startLoadingDialog();
+        photoFlag = false;
+        compressFlag = true;
+        compressNum = "60";
+        String para_x = Udp_Help.reverseRst(Udp_Help.get_came_hexTo645
+                (edittextX.getText().toString()));
+        String para_y = Udp_Help.reverseRst(Udp_Help.get_came_hexTo645
+                (edittextY.getText().toString()));
+        String para_xl = Udp_Help.reverseRst(Udp_Help.get_came_hexTo645
+                (edittextXLong.getText().toString()));
+        String para_yl = Udp_Help.reverseRst(Udp_Help.get_came_hexTo645
+                (edittextYLong.getText().toString()));
+
+        String para_str = para_x + para_y + para_xl + para_yl;
+
+        String str1 = "68" + Udp_Help.reverseRst(edittextTablenum.getText().toString()) +
+                "68141400383310EF"+ Constants.HandlerKey + para_str;
+        String cs1 = Udp_Help.get_sum(str1) + "16";
+        String last1 = "FEFEFEFE" + str1 + cs1;
+        sendBlueMessage.sendBTblueMessage(last1,0);
+        //设置图片根据窗口参数的padding值
+        int x = Integer.parseInt(edittextX.getText().toString())*relative.getMeasuredWidth()/320;
+        int y = Integer.parseInt(edittextY.getText().toString())*relative.getMeasuredHeight()/240;
+        int xl = Integer.parseInt(edittextXLong.getText().toString())*relative.getMeasuredWidth()/320;
+        int yl = Integer.parseInt(edittextYLong.getText().toString())*relative.getMeasuredHeight()/240;
+        imageCameraShow.setPadding( x, y, relative.getMeasuredWidth()-(x+xl),relative.getMeasuredHeight()-(y+yl));
+    }
+
     private void photo() {//34EE主动上报第一张图片；  34DD手动读取第一张图片
         cleanDrawable();
         photoFlag = false;
@@ -431,6 +485,8 @@ public class Fragment_NBMeter_Install extends BaseFragment implements DragScaleV
             msg.obj = data;
             Fragment_NBMeter_Install.this.handler.sendMessage(msg);
         }
+
+
     }
 
     @Override
@@ -439,12 +495,6 @@ public class Fragment_NBMeter_Install extends BaseFragment implements DragScaleV
         edittextY.setText("" + y);
         edittextXLong.setText("" + x_long);
         edittextYLong.setText("" + y_long);
-    }
-
-    @Override
-    public void setDataChange(String receive) {
-        if (fragment.isVisible())
-            connectFlag.setText(receive);
     }
 
     @Override

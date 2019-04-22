@@ -69,7 +69,7 @@ public class ProgectListPresenter implements I_ProgectListPresenter {
 
     /**获取配置方案*/
     @Override
-    public void getConfigurationPlan(String projectName) {
+    public void getConfigurationPlan(final int projectId, String projectName) {
         OkGo.<ConfigurationPlanResponse>get(API.getConfigurationPlan)
                 .tag(this)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
@@ -80,7 +80,7 @@ public class ProgectListPresenter implements I_ProgectListPresenter {
                                  if(response.body().getCode() == 0){
                                     List<ConfigurationPlanResponse.PlanBean> planBeans = response.body().getList();
                                     for(ConfigurationPlanResponse.PlanBean planItem : planBeans ){
-                                        downloadFiles(planItem.getConfigurationPlanUrl(),planItem.getConfigurationPlanName());
+                                        downloadFiles(projectId,planItem.getConfigurationPlanUrl(),planItem.getConfigurationPlanName());
                                     }
 
                                  }else{
@@ -98,11 +98,11 @@ public class ProgectListPresenter implements I_ProgectListPresenter {
     }
 
     @Override
-    public void downloadFiles(String url,String name) {
+    public void downloadFiles(int projectId,String url,String name) {
         OkGo.<File>get(url)
                 .tag(this)
                 .params("token", SaveUserInfo.getLoginUser(context).getToken())
-                .execute(new FileCallback(Constants.filePath,name) {
+                .execute(new FileCallback(Constants.filePath+projectId,name) {
 
                     @Override
                     public void onStart(Request<File, ? extends Request> request) {

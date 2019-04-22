@@ -7,7 +7,9 @@ package com.northmeter.equipmentcloud.enumBean;
 public enum EvenBusEnum {
     EvenBus_WaterMeterPicShow("EvenBus_WaterMeterPicShow"),
     EvenBus_NBMeter_Install("EvenBus_NBMeter_Install"),
-    EvenBus_NBMeter_Setting("EvenBus_NBMeter_Setting");
+    EvenBus_NBMeter_Setting("EvenBus_NBMeter_Setting"),
+    EvenBus_BlueTooth_Connect("EvenBus_BlueTooth_Connect"),
+    EvenBus_BuildDevice("EvenBus_BuildDevice");
 
     private String evenName;
 

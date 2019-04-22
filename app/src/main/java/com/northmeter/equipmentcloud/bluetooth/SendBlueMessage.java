@@ -58,7 +58,7 @@ public class SendBlueMessage implements ISendBlueMessage {
         System.out.println("指令："+para);
         //bluetoothChatService = BlueTooth_UniqueInstance.getInstance().getBluetoothChatService();
         bluetoothChatService =  BlueTooth_ConnectHelper.getInstance().getmChatService();
-        boolean flag = BlueTooth_UniqueInstance.getInstance().isBooleanConnected();
+        boolean flag = BlueTooth_ConnectHelper.getInstance().isBooleanConnected();
         BlueTooth_UniqueInstance.getInstance().setState(state);
         if(!flag){
             showMessage.showMessage("蓝牙未连接");

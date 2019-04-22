@@ -111,6 +111,7 @@ public class Fragment_NBMeter_Setting extends BaseFragment implements I_ShowBlue
     LinearLayout layoutPostalControl;
 
     private SendBlueMessage sendBlueMessage;
+    private int projectId;
     private String equipmentId;
     private String exposure_setting;//曝光设置，自动或者手动曝光
     private String str_Enable = "34";//使能位,参考起始时间上报或者忽略起始时间上报，禁能
@@ -136,12 +137,18 @@ public class Fragment_NBMeter_Setting extends BaseFragment implements I_ShowBlue
 
     @Override
     protected void startGetArgument(Bundle savedInstanceState) {
+        projectId = getActivity().getIntent().getIntExtra("projectId",0);
+        equipmentId = getActivity().getIntent().getStringExtra("equipmentNum");
+        if(equipmentId==null){
+            equipmentId = "000000000000";
+        }
+        BlueTooth_UniqueInstance.getInstance().setTableNum(equipmentId);
 
         sendBlueMessage = new SendBlueMessage(this);
 
         settingPresenter = new Fragment_NBMeter_SettingPresenter(getActivity(), this);
         //获取文件列表
-        //settingPresenter.getFilesAllName(Constants.filePath);
+        settingPresenter.getFilesAllName(Constants.filePath+projectId);
     }
 
     @Override
@@ -241,7 +248,7 @@ public class Fragment_NBMeter_Setting extends BaseFragment implements I_ShowBlue
                 String newPostalAdd = Udp_Help.reverseRst(etPostalAddressNew.getText().toString());
 
                 String para_change = "68" + postalAdd +
-                        "68150600" + newPostalAdd;
+                        "68150600" + Udp_Help.create_645ToHex(newPostalAdd);
                 String cs = Udp_Help.get_sum(para_change).toUpperCase() + "16";
                 String sendMsg = "FEFEFEFE" + para_change + cs;
                 sendBlueMessage.sendBTblueMessage(sendMsg, 2);
@@ -318,6 +325,7 @@ public class Fragment_NBMeter_Setting extends BaseFragment implements I_ShowBlue
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         tvChoosePlan.setText(planDatas.get(position).getName());
                         dialogSex.cancel();
+                        setConfigure(settingPresenter.getFilesInfo(projectId,planDatas.get(position).getName()));
                     }
                 });
                 break;
@@ -386,8 +394,26 @@ public class Fragment_NBMeter_Setting extends BaseFragment implements I_ShowBlue
                 });
                 break;
         }
+    }
 
-
+    private void setConfigure(List<String> paraList){
+        if(paraList.size()>=15){
+            etExposureTime.setText(paraList.get(0));
+            tvExposureSetting.setText(paraList.get(1));
+            etCoordinateX.setText(paraList.get(2));
+            etCoordinateY.setText(paraList.get(3));
+            etCoordinateXlong.setText(paraList.get(4));
+            etCoordinateYlong.setText(paraList.get(5));
+            etContrastRatio.setText(paraList.get(6));
+            etCompressionRatio.setText(paraList.get(7));
+            tvFlashState.setText(paraList.get(8));
+            tvReportingType.setText(paraList.get(9));
+            tvReportingDate.setText(paraList.get(10));
+            tvReportingTime.setText(paraList.get(11));
+            etSpaceTime.setText(paraList.get(12));
+            etRandomTime.setText(paraList.get(13));
+            tvPhotoTime.setText(paraList.get(14));
+        }
     }
 
     private void getSelectSetting(String status, int state) {
@@ -401,7 +427,7 @@ public class Fragment_NBMeter_Setting extends BaseFragment implements I_ShowBlue
 
     private String get_setting() {//4c3310ef 现场参数设置
         String para_flash = "DDDD";
-        if (tvExposureSetting.getText().equals("自动曝光")) {
+        if (tvExposureSetting.getText().toString().equals("自动曝光")) {
             exposure_setting = "DD";//自动曝光
         } else {
             exposure_setting = "EE";//手动曝光
@@ -486,10 +512,13 @@ public class Fragment_NBMeter_Setting extends BaseFragment implements I_ShowBlue
             int control_state = BlueTooth_UniqueInstance.getInstance().getState();
             switch (control_state) {
                 case 1:
-                    if (checkORselect) {
-                        sendBlueMessage.sendBTblueMessage(get_TimeSet(), 2);
-                    } else {
-                        getSelectSetting("38343337", 2);
+                    if (blueMsg.equals("success")) {
+                        if (checkORselect) {
+                            sendBlueMessage.sendBTblueMessage(get_TimeSet(), 2);
+                        }
+                    } else if (blueMsg.equals("fail")) {
+                        stopLoadingDialog();
+                        showMsg("操作失败");
                     }
                     break;
                 case 2:
@@ -506,12 +535,13 @@ public class Fragment_NBMeter_Setting extends BaseFragment implements I_ShowBlue
 
             if (blueMsg.length() >= 24) {
                 String control = blueMsg.substring(22, 24).toUpperCase();
-                switch (control) {
+                switch (control) {//3DDD33333333733423336FDD6FDDDD
                     case "91":
                         String msgflag = blueMsg.substring(28, 36).toUpperCase();
                         String data = blueMsg.substring(36, blueMsg.length() - 4);
                         switch (msgflag) {
                             case "4C3310EF":
+                                getSelectSetting("38343337", 2);//第二条查询命令
                                 //曝光时间
                                 String exposureTime = data.substring(0, 2);
                                 etExposureTime.setText(String.valueOf(Integer.valueOf(Udp_Help.get_645ToHex(exposureTime), 16)));
@@ -542,7 +572,7 @@ public class Fragment_NBMeter_Setting extends BaseFragment implements I_ShowBlue
 
                                 //压缩率
                                 String et_compression_ratio = data.substring(22, 26);
-                                String data_ys = data.substring(et_compression_ratio.length() - 2, et_compression_ratio.length());
+                                String data_ys = et_compression_ratio.substring(et_compression_ratio.length() - 2, et_compression_ratio.length());
                                 etCompressionRatio.setText(String.valueOf(Integer.valueOf(Udp_Help.get_645ToHex(data_ys), 16)));
 
                                 //补光灯状态

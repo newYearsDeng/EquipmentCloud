@@ -51,9 +51,10 @@ dependencies {
     //控件绑定
     compile 'com.jakewharton:butterknife:8.7.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
-    compile 'com.zhy:autolayout:1.4.5'
     compile 'com.squareup.okhttp:okhttp:2.7.1'
     compile 'com.alibaba:fastjson:1.2.37'
+    //下拉刷新
+    compile 'com.huxq17.xrefreshview:xrefreshview:3.6.9'
     //evenbus
     compile 'org.greenrobot:eventbus:3.0.0'
 }

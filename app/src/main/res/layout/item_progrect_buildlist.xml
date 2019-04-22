@@ -22,6 +22,7 @@
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="0dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
             <TextView
                 android:id="@+id/tv_build_total"
@@ -44,6 +45,12 @@
                 android:textSize="16sp"
                 android:maxLines="1"
                 tools:text="小区名称" />
+            <ImageView
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerInside"
+                android:src="@drawable/device_list_add"/>
         </LinearLayout>
 
         <LinearLayout

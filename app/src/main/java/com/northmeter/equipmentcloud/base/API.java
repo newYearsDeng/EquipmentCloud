@@ -5,8 +5,11 @@ package com.northmeter.equipmentcloud.base;
  */
 
 public class API {
-    //public static String URL_BASE = "http://10.168.1.200:8080/machine-cloud";
-    public static String URL_BASE = "http://10.168.1.50:801/machine-cloud";
+    public static String URL_BASE = "https://devapi.beidiancloud.cn/machine-cloud";//腾讯云服务器
+    //public static String URL_BASE = "http://10.168.1.200:8080/machine-cloud";//200服务器
+    //public static String URL_BASE = "http://10.168.1.50:801/machine-cloud";//开发者电脑服务器
+    //public static String URL_BASE = "http://10.168.1.10:801/machine-cloud";//开发者电脑服务器
+
 
     /**账户管理--------------------------GET*/
     public static String login = URL_BASE +"/app/customers/login";
@@ -17,10 +20,10 @@ public class API {
     /**项目建筑信息的获取-------------------------GET*/
     public static String getBuildList = URL_BASE +"/app/project/buildinglist";
 
-    /**设备的激活--------------------------POST*/
+    /**设备的激活--------------------------GET*/
     public static String doactiveEquipment = URL_BASE +"/app/buildingequipment/active";
 
-    /**单个设备自检--------------------------POST*/
+    /**单个设备自检--------------------------GET*/
     public static String singleSelfChecking = URL_BASE+"/app/buildingequipment/detection";
 
     /**单个设备自检结果查询--------------------------GET*/
@@ -46,6 +49,9 @@ public class API {
 
     /**设备的详情--------------------------GET*/
     public static String getEquipmentDetails = URL_BASE+"/app/buildingequipment/details";
+
+    /**获取水表最新图片--------------------------GET*/
+    public static String getMeterNetWorkPic = URL_BASE+"/app/buildingequipment/getImageUrl";
 
 
 

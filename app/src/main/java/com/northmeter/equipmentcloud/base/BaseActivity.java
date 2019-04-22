@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.lzy.okgo.OkGo;
+import com.northmeter.equipmentcloud.bluetooth.BlueTooth_ConnectHelper;
+import com.northmeter.equipmentcloud.bluetooth.BlueTooth_UniqueInstance;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -48,6 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity implements IBaseLis
         BaseAppManager.getAppManager().addActivity(this);
         unbinder = ButterKnife.bind(this);
         mContext = this;
+        BlueTooth_ConnectHelper.getInstance();
         start();
     }
 

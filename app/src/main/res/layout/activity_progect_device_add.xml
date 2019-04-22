@@ -56,6 +56,8 @@
                 <EditText
                     android:layout_width="wrap_content"
                     android:id="@+id/tv_ipc_number"
+                    android:inputType="text"
+                    android:maxLength="20"
                     style="@style/device_add_text_right"
                     android:hint="请输入" />
             </RelativeLayout>

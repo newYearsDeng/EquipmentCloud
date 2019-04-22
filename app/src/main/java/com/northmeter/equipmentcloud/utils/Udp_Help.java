@@ -225,6 +225,21 @@ public class Udp_Help {
 		return stringBuffer.toString();
 	}
 
+	/**数据+33 生成645*/
+	public static String create_645ToHex(String para){
+		StringBuffer stringBuffer = new StringBuffer();
+		for(int i=0;i<para.length()/2;i++){
+			String result0 = Integer.toHexString(Integer.valueOf(para.substring(i*2,i*2+2),16)+51);
+			if(result0.length()<2){
+				result0 = "0"+result0;
+			}else if(result0.length()==8){//ffffffxx
+				result0 = result0.substring(result0.length()-2,result0.length());
+			}
+			stringBuffer.append(result0);
+		}
+		return stringBuffer.toString();
+	}
+
 	/**10进制参数 +33*/
 	public static String get_Stting_HexTo645(String para){
 		String result = Integer.toHexString(Integer.valueOf(para)+51);
@@ -248,6 +263,9 @@ public class Udp_Help {
 		switch(state){
 			case 0:
 				para = para.replaceAll("-","");
+				if(para.length()>=6){
+				    para = para.substring(para.length()-6,para.length());
+                }
 				break;
 			case 1:
 				para = para.replaceAll(":","");

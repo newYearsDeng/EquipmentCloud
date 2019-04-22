@@ -2,11 +2,8 @@ package com.northmeter.equipmentcloud.activity;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,24 +15,27 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.northmeter.equipmentcloud.I.IShowSMainMessage;
+import com.andview.refreshview.XRefreshView;
 import com.northmeter.equipmentcloud.I.I_ShowBlueSend;
 import com.northmeter.equipmentcloud.I.I_ShowBuildDevice;
 import com.northmeter.equipmentcloud.R;
 import com.northmeter.equipmentcloud.adapter.CommonAdapter;
 import com.northmeter.equipmentcloud.adapter.ViewHolder;
 import com.northmeter.equipmentcloud.base.BaseActivity;
-import com.northmeter.equipmentcloud.base.Constants;
+import com.northmeter.equipmentcloud.bean.EvenBusBean;
 import com.northmeter.equipmentcloud.bean.ProgectBuildDeviceResponse;
+import com.northmeter.equipmentcloud.bluetooth.BlueTooth_ConnectHelper;
 import com.northmeter.equipmentcloud.bluetooth.BlueTooth_UniqueInstance;
-import com.northmeter.equipmentcloud.bluetooth.GetBlueEntity;
 import com.northmeter.equipmentcloud.bluetooth.SendBlueMessage;
-import com.northmeter.equipmentcloud.bluetooth.bt_bluetooth.BluetoothChatService;
 import com.northmeter.equipmentcloud.bluetooth.bt_bluetooth.BtDeviceListActivity;
 import com.northmeter.equipmentcloud.camera.activity.CaptureActivity;
+import com.northmeter.equipmentcloud.enumBean.EvenBusEnum;
 import com.northmeter.equipmentcloud.presenter.ProgectBuildDevicePresenter;
-import com.northmeter.equipmentcloud.utils.Udp_Help;
 import com.northmeter.equipmentcloud.widget.CommonDialog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,15 +43,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.northmeter.equipmentcloud.bluetooth.bluetooth.blueActivity.DeviceListActivity.DEVICE_NAME;
-import static com.northmeter.equipmentcloud.bluetooth.bluetooth.blueActivity.DeviceListActivity.TOAST;
-
 /**
  * Created by dyd on 2019/2/27.
  * 建筑内设备列表
  */
 
-public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBuildDevice, IShowSMainMessage,I_ShowBlueSend, TextWatcher {
+public class ProgectBuildDeviceActivity extends BaseActivity implements XRefreshView.XRefreshViewListener, I_ShowBuildDevice, I_ShowBlueSend, TextWatcher
+{
 
     @BindView(R.id.tv_toolbar_title)
     TextView tvToolbarTitle;
@@ -69,13 +67,15 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
     Button btnDeviceDelSure;
     @BindView(R.id.tv_right_text)
     TextView tvRightText;
+    @BindView(R.id.x_refresh_view)
+    XRefreshView xRefreshView;
     private CommonAdapter commonAdapter;
     private List<ProgectBuildDeviceResponse.PageList> datas = new ArrayList<>();
     private List<ProgectBuildDeviceResponse.PageList> datasBack = new ArrayList<>();
     private List<ProgectBuildDeviceResponse.PageList> searchDatas = new ArrayList<>();
     private int projectId, recordId;
-    private String buildingName,projectName;
-    private boolean showOrHide = false;
+    private String buildingName, projectName;
+    private boolean showOrHide = false;//显示或隐藏设备的s
     private ProgectBuildDevicePresenter progectBuildDevicePresenter;
     private CommonDialog commonDialog;
     private String scanTableNum;
@@ -83,20 +83,13 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
     private static final int REQUEST_CONNECT_DEVICE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
 
-    public static final int MESSAGE_STATE_CHANGE = 1;
-    public static final int MESSAGE_READ = 2;
-    public static final int MESSAGE_WRITE = 3;
-    public static final int MESSAGE_DEVICE_NAME = 4;
-    public static final int MESSAGE_TOAST = 5;
 
     private BluetoothAdapter mBluetoothAdapter = null;
-    private BluetoothChatService mChatService = null;
     private SendBlueMessage sendBlueMessage;
-    private GetBlueEntity getBlueEntity;
+
 
     private int doRecordId;
-    private String doItemTypeId,doEquipmentId,doEquipmentNum,doEquipmentName,fileName;
-    private int activeStatus;//激活状态
+    private String doItemTypeId, doEquipmentId, doEquipmentNum, fileName, doEquipmentName;
 
     @Override
     protected int getLayoutId() {
@@ -107,6 +100,30 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+        progectBuildDevicePresenter.getEquipList(projectId, recordId);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
 
     @Override
     public void initIntentData() {
@@ -132,11 +149,49 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
     public void initData() {
         super.initData();
         etSearchName.addTextChangedListener(this);
+        initRefresh();
         initListView();
         progectBuildDevicePresenter = new ProgectBuildDevicePresenter(this);
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mBluetoothAdapter = BlueTooth_ConnectHelper.getInstance().getmBluetoothAdapter();
         sendBlueMessage = new SendBlueMessage(this);
-        getBlueEntity = new GetBlueEntity(this);
+    }
+
+    private void initRefresh() {
+        // 设置是否可以下拉刷新
+        xRefreshView.setPullRefreshEnable(true);
+        // 设置是否可以上拉加载
+        xRefreshView.setPullLoadEnable(false);
+        // 设置上次刷新的时间
+        xRefreshView.restoreLastRefreshTime(xRefreshView.getLastRefreshTime());
+        // 设置时候可以自动刷新
+        xRefreshView.setAutoRefresh(false);
+        xRefreshView.setXRefreshViewListener(this);
+        //xRefreshView.startRefresh();
+    }
+
+    @Override
+    public void onRefresh() {
+
+    }
+
+    @Override
+    public void onRefresh(boolean isPullDown) {
+        progectBuildDevicePresenter.getEquipList(projectId, recordId);
+    }
+
+    @Override
+    public void onLoadMore(boolean isSilence) {
+
+    }
+
+    @Override
+    public void onRelease(float direction) {
+
+    }
+
+    @Override
+    public void onHeaderMove(double headerMovePercent, int offsetY) {
+
     }
 
 
@@ -159,17 +214,14 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
                 break;
             case REQUEST_CONNECT_DEVICE://高速蓝牙
                 if (resultCode == Activity.RESULT_OK) {
+                    progectBuildDevicePresenter.startLoadingDialog();
                     String address = data.getExtras().getString(
                             BtDeviceListActivity.EXTRA_DEVICE_ADDRESS);
-                    BluetoothDevice device = mBluetoothAdapter
-                            .getRemoteDevice(address);
-                    mChatService.connect(device);
+                    BlueTooth_ConnectHelper.getInstance().blueToothConnect(address);
                 }
                 break;
             case REQUEST_ENABLE_BT:
-                if (resultCode == Activity.RESULT_OK) {
-                    setupChat();
-                } else {
+                if (resultCode != Activity.RESULT_OK) {
                     showMsg("该功能需要打开手机蓝牙");
                 }
                 break;
@@ -186,8 +238,7 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
                     @Override
                     public void onClick(View v) {
 
-                        if (item.getDevtestMode()==2) {//1-远端激活，2-近端激活
-                            activeStatus = item.getActiveStatus();
+                        if (item.getDevtestMode() == 2 || item.getActivationMode() == 2) {//1-远端激活，2-近端激活
                             doRecordId = item.getRecordId();
                             doEquipmentId = item.getEquipmentId();
                             doEquipmentNum = item.getEquipmentNum();
@@ -200,24 +251,48 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
                                         BluetoothAdapter.ACTION_REQUEST_ENABLE);
                                 startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
                             } else {
-                                if (mChatService == null) {
-                                    setupChat();
+                                switch (item.getActiveStatus()) {
+                                    case 2://设备测试
+                                        if (BlueTooth_ConnectHelper.getInstance().isBooleanConnected()) {
+                                            progectBuildDevicePresenter.startLoadingDialog();
+                                            sendBlueMessage.sendBTblueMessage(progectBuildDevicePresenter.sendNBActiveORResiger(doEquipmentNum), 25);
+                                        } else {
+                                            BlueTooth_UniqueInstance.getInstance().setState(24);
+                                            Intent serverIntent = new Intent(ProgectBuildDeviceActivity.this, BtDeviceListActivity.class);
+                                            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+                                        }
+                                        break;
+                                    default://设备激活
+                                        if(fileName==null||fileName==""||fileName.equals("")){//如果设备配置文件为空，则直接发送本地激活命令
+                                            if (BlueTooth_ConnectHelper.getInstance().isBooleanConnected()) {
+                                                progectBuildDevicePresenter.startLoadingDialog();
+                                                sendBlueMessage.sendBTblueMessage(progectBuildDevicePresenter.sendNBActiveORResiger(doEquipmentNum), 23);
+                                            } else {
+                                                BlueTooth_UniqueInstance.getInstance().setState(26);
+                                                Intent serverIntent = new Intent(ProgectBuildDeviceActivity.this, BtDeviceListActivity.class);
+                                                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+                                            }
+                                        }else{
+                                            if (BlueTooth_ConnectHelper.getInstance().isBooleanConnected()) {
+                                                String para_1 = progectBuildDevicePresenter.getFilesInfo(projectId,doEquipmentNum, fileName, 0);
+                                                if (para_1 != null) {//设置现场参数
+                                                    progectBuildDevicePresenter.startLoadingDialog();
+                                                    sendBlueMessage.sendBTblueMessage(para_1, 21);
+                                                }
+                                            } else {
+                                                BlueTooth_UniqueInstance.getInstance().setState(20);
+                                                Intent serverIntent = new Intent(ProgectBuildDeviceActivity.this, BtDeviceListActivity.class);
+                                                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+                                            }
+                                        }
+                                        break;
                                 }
-                                if (BlueTooth_UniqueInstance.getInstance().isBooleanConnected()) {
-                                    String para_1 = progectBuildDevicePresenter.getFilesInfo(doEquipmentNum,fileName,0);
-                                    if(para_1 == null){//设置现场参数
-                                        showMsg("文件不存在，请返回项目列表重新加载");
-                                    }else{
-                                        sendBlueMessage.sendBTblueMessage(para_1,0);
-                                    }
-                                } else {
-                                    Intent serverIntent = new Intent(ProgectBuildDeviceActivity.this, BtDeviceListActivity.class);
-                                    startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
-                                }
+
                             }
                         } else {
                             if (item.getActiveStatus() == 2) {
-                                progectBuildDevicePresenter.doTestEquipment(item.getRecordId(),item.getEquipmentId(),item.getEquipmentNum(),item.getItemTypeId(),item.getEquipmentName(), 0);
+                                progectBuildDevicePresenter.doTestEquipment(item.getRecordId(), item.getEquipmentId(), item.getEquipmentNum(),
+                                        item.getItemTypeId(), item.getEquipmentName(), 0);
                             } else {
                                 progectBuildDevicePresenter.doactiveEquipment(item.getRecordId(), 1);
                             }
@@ -225,7 +300,7 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
                     }
                 });
 
-                if (item.isDelShow()) {
+                if (showOrHide) {
                     helper.getView(R.id.btn_device_check).setVisibility(View.VISIBLE);
                     helper.getView(R.id.btn_device_register).setVisibility(View.GONE);
                     helper.getView(R.id.btn_device_active).setVisibility(View.GONE);
@@ -253,32 +328,43 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
                         helper.getView(R.id.btn_device_active).setVisibility(View.VISIBLE);
                         if (activeStatus == 4) {//不可激活,直接进入设备测试
                             helper.getView(R.id.btn_device_active).setClickable(false);
-                            helper.getView(R.id.btn_device_active).setBackground(getResources().getDrawable(R.color.color_little_gray));
+                            helper.getView(R.id.btn_device_active).setBackground(getResources().getDrawable(R.drawable.no_selector_bg));
                             helper.getTextViewSet(R.id.btn_device_active, "未激活");
                         } else {
                             switch (activeStatus) {
                                 case 0://未激活，点此重新激活
                                     helper.getTextViewSet(R.id.btn_device_active, "未激活");
+                                    helper.getView(R.id.btn_device_active).setClickable(true);
+                                    helper.getView(R.id.btn_device_active).setBackground(getResources().getDrawable(R.drawable.selector_sure_button_bg));
                                     break;
                                 case 1://激活中
                                     helper.getTextViewSet(R.id.btn_device_active, "激活中");
                                     helper.getView(R.id.btn_device_active).setClickable(false);
+                                    helper.getView(R.id.btn_device_active).setBackground(getResources().getDrawable(R.drawable.no_selector_bg));
                                     break;
                                 case 2://激活成功
-                                    if(item.getImplementStatus()==0){//测试状态 0-未执行完成 1-已执行完毕 2—未测试过
+                                    if (item.getImplementStatus() == 0) {//测试状态 0-未执行完成 1-已执行完毕 2—未测试过
+                                        helper.getTextViewSet(R.id.btn_device_active, "测试中");
                                         helper.getView(R.id.btn_device_active).setClickable(false);
-                                        helper.getView(R.id.btn_device_active).setBackground(getResources().getDrawable(R.color.color_little_gray));
+                                        helper.getView(R.id.btn_device_active).setBackground(getResources().getDrawable(R.drawable.no_selector_bg));
+                                    }else{
+                                        if(item.getImplementResult()==1){//0-测试成功 1-测试失败
+                                            helper.getTextViewSet(R.id.btn_device_active, "测试失败");
+                                        }else{
+                                            helper.getTextViewSet(R.id.btn_device_active, "设备测试");
+                                        }
+                                        helper.getView(R.id.btn_device_active).setClickable(true);
+                                        helper.getView(R.id.btn_device_active).setBackground(getResources().getDrawable(R.drawable.selector_sure_button_bg));
                                     }
-                                    helper.getTextViewSet(R.id.btn_device_active, "设备测试");
                                     break;
                                 case 3://激活失败，点此重新激活
                                     helper.getTextViewSet(R.id.btn_device_active, "激活失败");
-                                    helper.getView(R.id.btn_device_active).setClickable(false);
-                                    helper.getView(R.id.btn_device_active).setBackground(getResources().getDrawable(R.color.color_little_gray));
+                                    helper.getView(R.id.btn_device_active).setClickable(true);
+                                    helper.getView(R.id.btn_device_active).setBackground(getResources().getDrawable(R.drawable.selector_sure_button_bg));
                                     break;
                                 default:
                                     helper.getView(R.id.btn_device_active).setClickable(false);
-                                    helper.getView(R.id.btn_device_active).setBackground(getResources().getDrawable(R.color.color_little_gray));
+                                    helper.getView(R.id.btn_device_active).setBackground(getResources().getDrawable(R.drawable.no_selector_bg));
                                     break;
                             }
                         }
@@ -307,7 +393,8 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
                     public void onClick(View v) {
                         Intent intent_detail = new Intent();
                         intent_detail.putExtra("projectId", projectId);
-                        intent_detail.putExtra("equipmentId", item.getEquipmentId());
+                        intent_detail.putExtra("equipmentNum", item.getEquipmentNum());
+                        intent_detail.putExtra("itemTypeId", item.getItemTypeId());
                         intent_detail.putExtra("equipmentName", item.getEquipmentName());
                         intent_detail.putExtra("recordId", item.getRecordId());
                         goActivity(ProgectBuildDeviceDetailActivity.class, intent_detail);
@@ -318,8 +405,6 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
                     @Override
                     public void onClick(View v) {
                         Intent intent_detail = new Intent();
-                        intent_detail.putExtra("projectId", projectId);
-                        intent_detail.putExtra("equipmentId", item.getEquipmentId());
                         intent_detail.putExtra("equipmentName", item.getEquipmentName());
                         intent_detail.putExtra("recordId", item.getRecordId());
                         goActivity(ProgectSelfCheckingDeviceResultActivity.class, intent_detail);
@@ -341,7 +426,7 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
                 helper.getView(R.id.linear_buildlist).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(showOrHide){
+                        if (showOrHide) {
                             if (item.isCheck()) {
                                 item.setCheck(false);
                             } else {
@@ -373,7 +458,7 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
             case R.id.iv_device_add://增加设备
                 Intent intent_add = new Intent();
                 intent_add.putExtra("projectId", projectId);
-                intent_add.putExtra("projectName",projectName);
+                intent_add.putExtra("projectName", projectName);
                 intent_add.putExtra("recordId", recordId);
                 goActivity(ProgectDeviceAddActivity.class, intent_add);
                 break;
@@ -383,9 +468,6 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
                 ivDeviceDelete.setVisibility(View.GONE);
                 ivDeviceAdd.setVisibility(View.GONE);
                 showOrHide = true;
-                for (ProgectBuildDeviceResponse.PageList data : datas) {
-                    data.setDelShow(showOrHide);
-                }
                 commonAdapter.notifyDataSetChanged();
                 break;
             case R.id.tv_right_text://退出删除功能
@@ -394,9 +476,6 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
                 ivDeviceDelete.setVisibility(View.VISIBLE);
                 ivDeviceAdd.setVisibility(View.VISIBLE);
                 showOrHide = false;
-                for (ProgectBuildDeviceResponse.PageList data : datas) {
-                    data.setDelShow(showOrHide);
-                }
                 commonAdapter.notifyDataSetChanged();
                 break;
             case R.id.btn_device_del_sure://确认删除按钮
@@ -421,6 +500,7 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
 
     @Override
     public void showData(List<ProgectBuildDeviceResponse.PageList> datas) {
+        xRefreshView.stopRefresh();
         this.datas.clear();
         this.datas.addAll(datas);
         this.datasBack.clear();
@@ -428,11 +508,14 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
         commonAdapter.notifyDataSetChanged();
         if (datas.isEmpty()) {
             tvEmpty.setVisibility(View.VISIBLE);
+        } else {
+            tvEmpty.setVisibility(View.GONE);
         }
     }
 
     @Override
     public void returnSuccess(String msg, int state) {
+        xRefreshView.stopRefresh();
         showMsg(msg);
         if (state == 1) {
             progectBuildDevicePresenter.getEquipList(projectId, recordId);
@@ -441,54 +524,9 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
 
     @Override
     public void returnFail(String msg) {
+        xRefreshView.stopRefresh();
         showMsg(msg);
     }
-
-    @OnClick(R.id.btn_device_del_sure)
-    public void onViewClicked() {
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public synchronized void onResume() {
-        super.onResume();
-        progectBuildDevicePresenter.getEquipList(projectId, recordId);
-        if (mChatService != null) {
-            if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
-                mChatService.start();
-            }
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        BlueTooth_UniqueInstance.getInstance().setBooleanConnected(false);
-        if (mChatService != null) {
-            mChatService.stop();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        BlueTooth_UniqueInstance.getInstance().setBooleanConnected(false);
-        if (mChatService != null) {
-            mChatService.stop();
-        }
-    }
-
-    private void setupChat() {
-        mChatService = new BluetoothChatService(this, btHandler);
-        BlueTooth_UniqueInstance.getInstance().setBluetoothChatService(mChatService);
-    }
-
-
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -516,96 +554,69 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements I_ShowBu
         }
     }
 
-    @Override
-    public void showMainMsg(String message) {
+    /**
+     * 事件订阅者处理事件
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMoonEvent(EvenBusBean evenBusBean) {
+        String topic = evenBusBean.getTopic();
         int state = BlueTooth_UniqueInstance.getInstance().getState();
-        if (message.equals("success")) {
-            switch (state){
-                case 0://设置现场参数 时间
-                    String para_2  = progectBuildDevicePresenter.getFilesInfo(doEquipmentNum,fileName,1);
-                    if(para_2 == null){
-                        showMsg("文件不存在，请返回项目列表重新加载");
-                    }else{
-                        sendBlueMessage.sendBTblueMessage(para_2,1);
-                    }
-                    break;
-                case 1://唤醒激活
-                    sendBlueMessage.sendBTblueMessage(progectBuildDevicePresenter.sendNBActiveORResiger(doEquipmentNum), 2);
-                    break;
-                case 2:
-                    if (activeStatus == 2) {
-                        progectBuildDevicePresenter.doTestEquipment(doRecordId,doEquipmentId,doEquipmentNum,doItemTypeId,doEquipmentName, 1);
-                    } else {
+        if (topic.equals(EvenBusEnum.EvenBus_BuildDevice.getEvenName())) {
+            String message = evenBusBean.getData();
+            if (message.equals("success")) {
+                switch (state) {
+                    case 20://连接蓝牙后本地发送配置参数
+                        progectBuildDevicePresenter.startLoadingDialog();
+                        String para_1 = progectBuildDevicePresenter.getFilesInfo(projectId,doEquipmentNum, fileName, 0);
+                        if (para_1 != null) {//设置现场参数
+                            sendBlueMessage.sendBTblueMessage(para_1, 21);
+                        } else {
+                            progectBuildDevicePresenter.stopLoadingDialog();
+                        }
+                        break;
+                    case 21://设置现场参数 时间
+                        String para_2 = progectBuildDevicePresenter.getFilesInfo(projectId,doEquipmentNum, fileName, 1);
+                        if (para_2 != null) {
+                            sendBlueMessage.sendBTblueMessage(para_2, 22);
+                        } else {
+                            progectBuildDevicePresenter.stopLoadingDialog();
+                        }
+                        break;
+                    case 22://唤醒激活
+                        sendBlueMessage.sendBTblueMessage(progectBuildDevicePresenter.sendNBActiveORResiger(doEquipmentNum), 23);
+                        break;
+                    case 26://无配置文件时激活
+                        progectBuildDevicePresenter.startLoadingDialog();
+                        sendBlueMessage.sendBTblueMessage(progectBuildDevicePresenter.sendNBActiveORResiger(doEquipmentNum), 23);
+                        break;
+                    case 23://通知后台激活
+                        progectBuildDevicePresenter.stopLoadingDialog();
                         progectBuildDevicePresenter.doactiveEquipment(doRecordId, 1);
-                    }
-                    showMsg("配置成功，等待激活完成");
-                    break;
+                        break;
+                    case 24://连接蓝牙后本地发送测试命令
+                        progectBuildDevicePresenter.startLoadingDialog();
+                        sendBlueMessage.sendBTblueMessage(progectBuildDevicePresenter.sendNBActiveORResiger(doEquipmentNum), 25);
+                        break;
+                    case 25://通知后台测试
+                        progectBuildDevicePresenter.stopLoadingDialog();
+                        progectBuildDevicePresenter.doTestEquipment(doRecordId, doEquipmentId, doEquipmentNum, doItemTypeId, doEquipmentName, 1);
+                        break;
+                }
+            } else if (message.equals("fail")) {
+                progectBuildDevicePresenter.stopLoadingDialog();
+                showMsg("配置失败,请重试");
             }
-        } else if (message.equals("fail")) {
-            showMsg("配置失败,请重试");
-        }
-
-    }
-
-    @Override
-    public void showSettingMsg(String message) {
-
-    }
-
-
-    private final Handler btHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MESSAGE_STATE_CHANGE:
-                    switch (msg.arg1) {
-                        case BluetoothChatService.STATE_CONNECTED:
-                            showMsg("连接成功");
-                            BlueTooth_UniqueInstance.getInstance().setBooleanConnected(true);
-                            String para_1 = progectBuildDevicePresenter.getFilesInfo(doEquipmentNum,fileName,0);
-                            if(para_1 == null){//设置现场参数
-                                showMsg("文件不存在，请返回项目列表重新加载");
-                            }else{
-                                sendBlueMessage.sendBTblueMessage(para_1,0);
-                            }
-                            break;
-                        case BluetoothChatService.STATE_CONNECTING:
-                            showMsg("连接中...");
-                            break;
-                        case BluetoothChatService.STATE_LISTEN:
-                            break;
-                        case BluetoothChatService.STATE_NONE:
-                            BlueTooth_UniqueInstance.getInstance().setBooleanConnected(false);
-                            showMsg("连接失败");
-                            break;
-                        case BluetoothChatService.STATE_STOP:
-                            BlueTooth_UniqueInstance.getInstance().setBooleanConnected(false);
-                            System.out.println("断开连接");
-                            break;
-                    }
-                    break;
-                case MESSAGE_WRITE:
-                    break;
-                case MESSAGE_READ:
-                    String readBuf = (String) msg.obj;
-                    System.out.println("接收到的数据转换后："+readBuf);
-                    getBlueEntity.transmitBlueMsg(readBuf);
-                    break;
-                case MESSAGE_DEVICE_NAME:
-                    //save the connected device's name
-                    String mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
-                    break;
-                case MESSAGE_TOAST://连接丢失
-                    BlueTooth_UniqueInstance.getInstance().setBooleanConnected(false);
-                    showMsg("连接断开");
-                    showMsg(msg.getData().getString(TOAST));
-                    break;
+        } else if (topic.equals(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName())) {
+            showMsg(evenBusBean.getData());
+            if (state == 20 || state == 24 || state==26) {
+                progectBuildDevicePresenter.stopLoadingDialog();
             }
         }
-    };
+    }
 
     @Override
     public void showMessage(String message) {
 
     }
+
 }

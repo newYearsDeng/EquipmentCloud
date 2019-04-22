@@ -39,7 +39,7 @@ public class ProgectSelfCheckingResultActivity extends BaseActivity implements I
     private int projectId,recordId;
     private String buildingName;
     private CommonAdapter commonAdapter;
-    private List<CommonResponse> datas = new ArrayList<CommonResponse>();
+    private List<CommonResponse> datas = new ArrayList<>();
 
     private ProgectSelfCheckingResultPresenter progectSelfCheckingResultPresenter;
 

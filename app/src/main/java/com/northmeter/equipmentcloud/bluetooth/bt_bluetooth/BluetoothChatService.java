@@ -21,6 +21,11 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 import static com.northmeter.equipmentcloud.bluetooth.bluetooth.blueActivity.DeviceListActivity.TOAST;
+import static com.northmeter.equipmentcloud.bluetooth.bt_bluetooth.BTMainActivity.MESSAGE_DEVICE_NAME;
+import static com.northmeter.equipmentcloud.bluetooth.bt_bluetooth.BTMainActivity.MESSAGE_READ;
+import static com.northmeter.equipmentcloud.bluetooth.bt_bluetooth.BTMainActivity.MESSAGE_STATE_CHANGE;
+import static com.northmeter.equipmentcloud.bluetooth.bt_bluetooth.BTMainActivity.MESSAGE_TOAST;
+import static com.northmeter.equipmentcloud.bluetooth.bt_bluetooth.BTMainActivity.MESSAGE_WRITE;
 
 /**
  * This class does all the work for setting up and managing Bluetooth
@@ -87,7 +92,7 @@ public class BluetoothChatService {
 		mState = state;
 
 		// Give the new state to the Handler so the UI Activity can update
-		mHandler.obtainMessage(LocationSet_NBDevice.MESSAGE_STATE_CHANGE, state, -1)
+		mHandler.obtainMessage(MESSAGE_STATE_CHANGE, state, -1)
 				.sendToTarget();
 	}
 
@@ -193,7 +198,7 @@ public class BluetoothChatService {
 		mConnectedThread.start();
 
 		// Send the name of the connected device back to the UI Activity
-		Message msg = mHandler.obtainMessage(LocationSet_NBDevice.MESSAGE_DEVICE_NAME);
+		Message msg = mHandler.obtainMessage(MESSAGE_DEVICE_NAME);
 		Bundle bundle = new Bundle();
 		bundle.putString(LocationSet_NBDevice.DEVICE_NAME, device.getName());
 		msg.setData(bundle);
@@ -268,7 +273,7 @@ public class BluetoothChatService {
 		setState(STATE_LISTEN);
 
 		// Send a failure message back to the Activity
-		Message msg = mHandler.obtainMessage(LocationSet_NBDevice.MESSAGE_TOAST);
+		Message msg = mHandler.obtainMessage(MESSAGE_TOAST);
 		Bundle bundle = new Bundle();
 		bundle.putString(TOAST, "Unable to connect device");
 		msg.setData(bundle);
@@ -282,7 +287,7 @@ public class BluetoothChatService {
 		setState(STATE_LISTEN);
 
 		// Send a failure message back to the Activity
-		Message msg = mHandler.obtainMessage(LocationSet_NBDevice.MESSAGE_TOAST);
+		Message msg = mHandler.obtainMessage(MESSAGE_TOAST);
 		Bundle bundle = new Bundle();
 		bundle.putString(TOAST, "Device connection was lost");
 		msg.setData(bundle);
@@ -504,7 +509,7 @@ public class BluetoothChatService {
 
 				if(data.substring(state+28,data.length()-4).length()/2 == len){
 
-					mHandler.obtainMessage(LocationSet_NBDevice.MESSAGE_READ,
+					mHandler.obtainMessage(MESSAGE_READ,
 							data.substring(state,data.length())).sendToTarget();
 					result = "";
 				}
@@ -552,7 +557,7 @@ public class BluetoothChatService {
 			try {
 				mmOutStream.write(buffer);
 				// Share the sent message back to the UI Activity
-				mHandler.obtainMessage(LocationSet_NBDevice.MESSAGE_WRITE, -1, -1,
+				mHandler.obtainMessage(MESSAGE_WRITE, -1, -1,
 						buffer).sendToTarget();
 			} catch (IOException e) {
 				Log.e(TAG, "Exception during write", e);

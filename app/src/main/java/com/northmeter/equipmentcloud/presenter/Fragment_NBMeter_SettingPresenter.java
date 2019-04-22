@@ -72,18 +72,18 @@ public class Fragment_NBMeter_SettingPresenter implements I_Fragment_NBMeter_Set
     /**获取文件列表*/
     public void getFilesAllName(String path) {
         File file=new File(path);
-        File[] files=file.listFiles();
         if(!file.exists()){
             file.mkdirs();
         }
+        File[] files = file.listFiles();
         if (files == null){
             showFilesInBTSetting.returnMessage("文件不存在，请返回项目列表重新加载");
         }else{
             List<LocalConfigurationPlanBean.PlanBean> fileList = new ArrayList<>();
-            LocalConfigurationPlanBean.PlanBean planBean = new LocalConfigurationPlanBean.PlanBean();
             for(int i = 0;i<files.length;i++){
                 System.out.println("path======"+files[i].getAbsolutePath());
                 System.out.println("name======"+files[i].getName());
+                LocalConfigurationPlanBean.PlanBean planBean = new LocalConfigurationPlanBean.PlanBean();
                 planBean.setAddress(files[i].getAbsolutePath());
                 planBean.setName(files[i].getName());
                 fileList.add(planBean);
@@ -109,39 +109,42 @@ public class Fragment_NBMeter_SettingPresenter implements I_Fragment_NBMeter_Set
      上报间隔分钟=5
      随机退避时间=5
      拍照时间=12:00*/
-    public String getFilesInfo(String equipmentId ,String fileName,int state){
-        String result = loadFromSDFile(Constants.filePath,fileName);
-        if(result==null){
+    public List<String> getFilesInfo(int projectId,String fileName){
+        List<String> paraList = new ArrayList<String>();
+        String result = loadFromSDFile(Constants.filePath+projectId,fileName);
+        if(result==null||result==""||result.equals("")){
             showFilesInBTSetting.returnMessage("文件不存在，请返回项目列表重新加载");
         }else{
-            String[] infoList = result.split("\n");
-            if(infoList.length>=15){
-                if(state == 0 ){
-                    String etExposureTime = infoList[0].split("=")[1];
-                    String tvExposureSetting = infoList[1].split("=")[1];
-                    String etCoordinateX = infoList[2].split("=")[1];
-                    String etCoordinateY = infoList[3].split("=")[1];
-                    String etCoordinateXlong = infoList[4].split("=")[1];
-                    String etCoordinateYlong = infoList[5].split("=")[1];
-                    String etContrastRatio = infoList[6].split("=")[1];
-                    String etCompressionRatio = infoList[7].split("=")[1];
-                    String tvFlashState = infoList[8].split("=")[1];
-                    String sendStr = get_setting(equipmentId,etExposureTime,tvExposureSetting ,  tvFlashState , etCoordinateX, etCoordinateY,
-                            etCoordinateXlong, etCoordinateYlong, etContrastRatio, etCompressionRatio);
-                    return sendStr;
-                }else{
-                    String reportingDatas = infoList[8].split("=")[1];
-                    String tvReportingDate = infoList[10].split("=")[1];
-                    String tvReportingTime = infoList[11].split("=")[1];
-                    String etSpaceTime = infoList[12].split("=")[1];
-                    String etRandomTime = infoList[13].split("=")[1];
-                    String tvPhotoTime = infoList[14].split("=")[1];
+            try{
+                String[] infoList = result.split("\n");
+                if(infoList.length>=15){
+                    for(String item:infoList){
+                        paraList.add(item.split("=")[1]);
+                    }
+//                    String etExposureTime = infoList[0].split("=")[1];
+//                    String tvExposureSetting = infoList[1].split("=")[1];
+//                    String etCoordinateX = infoList[2].split("=")[1];
+//                    String etCoordinateY = infoList[3].split("=")[1];
+//                    String etCoordinateXlong = infoList[4].split("=")[1];
+//                    String etCoordinateYlong = infoList[5].split("=")[1];
+//                    String etContrastRatio = infoList[6].split("=")[1];
+//                    String etCompressionRatio = infoList[7].split("=")[1];
+//                    String tvFlashState = infoList[8].split("=")[1];
+//                    String reportingDatas = infoList[9].split("=")[1];
+//                    String tvReportingDate = infoList[10].split("=")[1];
+//                    String tvReportingTime = infoList[11].split("=")[1];
+//                    String etSpaceTime = infoList[12].split("=")[1];
+//                    String etRandomTime = infoList[13].split("=")[1];
+//                    String tvPhotoTime = infoList[14].split("=")[1];
 
-                    String sendStr = get_TimeSet(equipmentId ,  reportingDatas, tvReportingDate, tvReportingTime,
-                            etSpaceTime, etRandomTime, tvPhotoTime);
-                    return sendStr;
+                    return paraList;
                 }
+            }catch(Exception e){
+                e.printStackTrace();
+                showFilesInBTSetting.returnMessage("配置文件中设置参数有误，解析无效");
+                return null;
             }
+
         }
         return null;
     }
@@ -151,7 +154,7 @@ public class Fragment_NBMeter_SettingPresenter implements I_Fragment_NBMeter_Set
     public String loadFromSDFile(String path,String fileName) {
         String result = "";
         try {
-            File file=new File(path+fileName);
+            File file=new File(path+"/"+fileName);
             if(!file.exists()){
                 result = null;
             }else{

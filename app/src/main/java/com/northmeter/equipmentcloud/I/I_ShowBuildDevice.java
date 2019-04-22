@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 public interface I_ShowBuildDevice {
-   void showData(List<ProgectBuildDeviceResponse.PageList> datas);
+    void showData(List<ProgectBuildDeviceResponse.PageList> datas);
     void returnSuccess(String msg ,int state);
     void returnFail(String msg);
 }

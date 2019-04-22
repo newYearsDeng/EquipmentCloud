@@ -1,5 +1,6 @@
 package com.northmeter.equipmentcloud.adapter;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +11,6 @@ import android.widget.TextView;
 
 import com.northmeter.equipmentcloud.R;
 import com.northmeter.equipmentcloud.bean.ProgectBuildListResponse;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
 
@@ -53,7 +53,13 @@ public class ProgectBuildListRVAapter extends RecyclerView.Adapter<ProgectBuildL
         holder.tvBuildTotal.setText((position + 1) + "/" + models.size());
         holder.tvBuildName.setText(models.get(position).getBuildingName());
         holder.tvProgrectUnregister.setText(String.valueOf(models.get(position).getEquipmentUnregistCount()));
+        holder.tvProgrectUnregister.setTextColor(models.get(position).getEquipmentUnregistCount()==0?
+                Color.parseColor("#333333"):Color.parseColor("#DC4F4F"));
+
         holder.tvProgrectUnactivation.setText(String.valueOf(models.get(position).getEquipmentUnactivateCount()));
+        holder.tvProgrectUnactivation.setTextColor(models.get(position).getEquipmentUnactivateCount()==0?
+                Color.parseColor("#333333"):Color.parseColor("#DC4F4F"));
+
         holder.tvProgrectEquipmentCount1.setText("/" + models.get(position).getEquipmentCount() + "个");
         holder.tvProgrectEquipmentCount2.setText("/" + models.get(position).getEquipmentCount() + "个");
 
@@ -105,7 +111,6 @@ public class ProgectBuildListRVAapter extends RecyclerView.Adapter<ProgectBuildL
 
         public BuildListViewHolder(View itemView) {
             super(itemView);
-            AutoUtils.autoSize(itemView);
             ButterKnife.bind(this, itemView);
         }
 

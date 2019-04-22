@@ -38,9 +38,11 @@ public class ProgectSelfCheckingDeviceResultActivity extends BaseActivity implem
     TextView dataValueTitle;
     @BindView(R.id.data_value_show)
     TextView dataValueShow;
+    @BindView(R.id.view_show)
+    View viewShow;
 
-    private int projectId, recordId;
-    private String equipmentName, equipmentId;
+    private int recordId;
+    private String equipmentName;
 
     private ProgectSingleSelfCheckingResultPresenter progectSingleSelfCheckingResultPresenter;
 
@@ -52,9 +54,7 @@ public class ProgectSelfCheckingDeviceResultActivity extends BaseActivity implem
     @Override
     public void initIntentData() {
         super.initIntentData();
-        projectId = getIntent().getIntExtra("projectId", 0);
         recordId = getIntent().getIntExtra("recordId", 0);
-        equipmentId = getIntent().getStringExtra("equipmentId");
         equipmentName = getIntent().getStringExtra("equipmentName");
     }
 
@@ -96,11 +96,12 @@ public class ProgectSelfCheckingDeviceResultActivity extends BaseActivity implem
 
     @Override
     public void showData(SingleSelfCheckingResultResponse.ResultBean resultBean) {
-        if (resultBean.getImplementResult() == 0) {
+        if (resultBean.getImplementResult()!=null&&resultBean.getImplementResult().equals("0")) {
             imSelfCheckResult.setImageResource(R.drawable.self_device_result_true);
         } else {
             imSelfCheckResult.setImageResource(R.drawable.self_device_result_false);
         }
+        viewShow.setVisibility(View.VISIBLE);
         tvProgrectName.setText(resultBean.getEquipmentName());
         tvProgrectAddress.setText(resultBean.getInstallAddress());
         tvProgrectTime.setText(resultBean.getEndTime());
@@ -122,6 +123,6 @@ public class ProgectSelfCheckingDeviceResultActivity extends BaseActivity implem
     @Override
     public void returnFail(String message) {
         showMsg(message);
-        imSelfCheckResult.setImageResource(R.drawable.self_device_result_false);
+        //imSelfCheckResult.setImageResource(R.drawable.self_device_result_false);
     }
 }

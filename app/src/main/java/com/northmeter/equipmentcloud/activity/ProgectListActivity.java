@@ -7,13 +7,12 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.northmeter.equipmentcloud.R;
 import com.northmeter.equipmentcloud.base.BaseActivity;
 import com.northmeter.equipmentcloud.fragment.Fragment_ProgectList;
-import com.northmeter.equipmentcloud.presenter.ProgectListPresenter;
 import com.northmeter.equipmentcloud.widget.EmptyFragmentPagerAdapter;
 import com.northmeter.equipmentcloud.widget.NoScrollViewPager;
 
@@ -37,6 +36,8 @@ public class ProgectListActivity extends BaseActivity {
     TabLayout tlEmpty;
     @BindView(R.id.vp_empty)
     NoScrollViewPager vpEmpty;
+    @BindView(R.id.btn_tb_back)
+    ImageView btnTbBack;
 
     private List<Fragment> fragments = new ArrayList<>();
     private String[] mTitles;
@@ -57,6 +58,7 @@ public class ProgectListActivity extends BaseActivity {
     public void setTitle() {
         super.setTitle();
         tvToolbarTitle.setText("项目列表");
+        btnTbBack.setVisibility(View.GONE);
         //tvRightText.setText("下一步");
     }
 
@@ -65,8 +67,8 @@ public class ProgectListActivity extends BaseActivity {
         super.initData();
         fragments.add(Fragment_ProgectList.newInstance(0));//加载未完成项目列表
         fragments.add(Fragment_ProgectList.newInstance(1));//加载已完成项目列表
-        mTitles = new String[]{"未完成","已完成"};
-        adapter = new EmptyFragmentPagerAdapter(getSupportFragmentManager(),fragments,mTitles);
+        mTitles = new String[]{"未完成", "已完成"};
+        adapter = new EmptyFragmentPagerAdapter(getSupportFragmentManager(), fragments, mTitles);
         vpEmpty.setAdapter(adapter);
         tlEmpty.setupWithViewPager(vpEmpty);
         vpEmpty.setOffscreenPageLimit(2);
@@ -82,9 +84,9 @@ public class ProgectListActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    @OnClick({R.id.btn_tb_back,R.id.tv_right_text})
+    @OnClick({R.id.btn_tb_back, R.id.tv_right_text})
     public void onViewClicked(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btn_tb_back:
                 this.finish();
                 break;

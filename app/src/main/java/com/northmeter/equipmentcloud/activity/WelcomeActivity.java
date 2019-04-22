@@ -25,7 +25,7 @@ public class WelcomeActivity extends BaseActivity {
             @Override
             public void run() {
             	try{
-            		startActivity(new Intent(WelcomeActivity.this,ProgectBuildDeviceDetailActivity.class));
+            		startActivity(new Intent(WelcomeActivity.this,LoginActivity.class));
                     finish();
             	}catch(Exception e){
             		startActivity(new Intent(WelcomeActivity.this,LoginActivity.class));

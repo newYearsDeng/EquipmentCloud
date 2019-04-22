@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/EquipmentCloud.iml" filepath="$PROJECT_DIR$/EquipmentCloud.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blebase/blebase.iml" filepath="$PROJECT_DIR$/blebase/blebase.iml" />
     </modules>
   </component>
 </project>
