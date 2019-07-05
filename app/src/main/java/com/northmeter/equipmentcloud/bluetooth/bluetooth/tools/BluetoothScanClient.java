@@ -16,11 +16,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.ParcelUuid;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.northmeter.equipmentcloud.R;
 import com.northmeter.equipmentcloud.bluetooth.bluetooth.view.DialogConfirm;
@@ -81,8 +80,10 @@ public class BluetoothScanClient {
                 public void onScanResult(int callbackType, ScanResult result) {
                     super.onScanResult(callbackType, result);
                     Log.w(TAG, "onScanResult: "+result.getScanRecord().getBytes());
-                    mLeScanCallback.onLeScan(result.getDevice(), result.getRssi(),
-                            result.getScanRecord().getBytes());
+                    if(mLeScanCallback!=null){
+                        mLeScanCallback.onLeScan(result.getDevice(), result.getRssi(),
+                                result.getScanRecord().getBytes());
+                    }
                 }
 
                 @Override
@@ -90,8 +91,10 @@ public class BluetoothScanClient {
                     super.onBatchScanResults(results);
                     Log.w(TAG, "onBatchScanResults: ");
                     for (ScanResult re : results) {
-                        mLeScanCallback.onLeScan(re.getDevice(), re.getRssi(),
-                                re.getScanRecord().getBytes());
+                        if(mLeScanCallback!=null){
+                            mLeScanCallback.onLeScan(re.getDevice(), re.getRssi(),
+                                    re.getScanRecord().getBytes());
+                        }
                     }
                 }
 

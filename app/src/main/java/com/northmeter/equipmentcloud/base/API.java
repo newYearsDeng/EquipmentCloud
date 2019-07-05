@@ -5,10 +5,11 @@ package com.northmeter.equipmentcloud.base;
  */
 
 public class API {
-    public static String URL_BASE = "https://devapi.beidiancloud.cn/machine-cloud";//腾讯云服务器
-    //public static String URL_BASE = "http://10.168.1.200:8080/machine-cloud";//200服务器
+    //public static String URL_BASE = "https://devapi.beidiancloud.cn/machine-cloud";//腾讯云服务器
+    public static String URL_BASE = "http://10.168.1.200:8080/machine-cloud";//200服务器
     //public static String URL_BASE = "http://10.168.1.50:801/machine-cloud";//开发者电脑服务器
     //public static String URL_BASE = "http://10.168.1.10:801/machine-cloud";//开发者电脑服务器
+    //public static String URL_BASE = "http://10.168.1.123:801/machine-cloud";//开发者电脑服务器
 
 
     /**账户管理--------------------------GET*/
@@ -52,6 +53,10 @@ public class API {
 
     /**获取水表最新图片--------------------------GET*/
     public static String getMeterNetWorkPic = URL_BASE+"/app/buildingequipment/getImageUrl";
+
+    /**前端传入设备建筑表id，进行设备撤销注册操作--------------------------POST*/
+    public static String cancelRegister = URL_BASE+"/app/buildingequipment/cancel/register";
+
 
 
 

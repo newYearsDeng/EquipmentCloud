@@ -197,6 +197,8 @@ public class WaterMeterPictureShow extends BaseActivity implements I_ShowBlueSen
         String topic = evenBusBean.getTopic();
         if (topic.equals(EvenBusEnum.EvenBus_WaterMeterPicShow.getEvenName())) {
             handleMessage(evenBusBean.getData());
+        } else if (topic.equals(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName())) {
+            connectFlag.setText(evenBusBean.getData());
         }
     }
 

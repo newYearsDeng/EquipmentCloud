@@ -1,8 +1,11 @@
 package com.northmeter.equipmentcloud.bluetooth;
 
 
+import android.os.Build;
+
+import com.jmesh.blebase.base.BleManager;
+import com.jmesh.blebase.state.BleDevice;
 import com.northmeter.equipmentcloud.I.ISendBlueMessage;
-import com.northmeter.equipmentcloud.I.IShowSMainMessage;
 import com.northmeter.equipmentcloud.I.I_ShowBlueSend;
 import com.northmeter.equipmentcloud.bluetooth.bluetooth.tools.BluetoothConnectionClient;
 import com.northmeter.equipmentcloud.bluetooth.bt_bluetooth.BluetoothChatService;
@@ -57,20 +60,44 @@ public class SendBlueMessage implements ISendBlueMessage {
     public void sendBTblueMessage(String para , int state) {
         System.out.println("指令："+para);
         //bluetoothChatService = BlueTooth_UniqueInstance.getInstance().getBluetoothChatService();
-        bluetoothChatService =  BlueTooth_ConnectHelper.getInstance().getmChatService();
-        boolean flag = BlueTooth_ConnectHelper.getInstance().isBooleanConnected();
         BlueTooth_UniqueInstance.getInstance().setState(state);
-        if(!flag){
-            showMessage.showMessage("蓝牙未连接");
-        }else{
-            final String input = para;
-            new Thread(){
-                public void run(){
-                    byte[] sendData = Udp_Help.strtoByteArray(input);
-                    bluetoothChatService.write(sendData);
+
+        switch (BlueTooth_UniqueInstance.getInstance().getBlueType()){
+            case 0:
+                bluetoothChatService =  BlueTooth_ConnectHelper.getInstance().getmChatService();
+                boolean flag = BlueTooth_ConnectHelper.getInstance().isBooleanConnected();
+                if(!flag){
+                    showMessage.showMessage("蓝牙未连接");
+                }else{
+                    final String input = para;
+                    new Thread(){
+                        public void run(){
+                            byte[] sendData = Udp_Help.strtoByteArray(input);
+                            bluetoothChatService.write(sendData);
+                        }
+                    }.start();
+                    //showMessage.showMessage("发送成功");
                 }
-            }.start();
-          //showMessage.showMessage("发送成功");
+                break;
+            case 1:
+                if(Build.VERSION.SDK_INT > 23){
+                    BleConnect_InstanceHelper bleConnect = BleConnect_InstanceHelper.getInstance();
+                    BleDevice bleDevice = BleManager.getInstance().getConnectedDeviceByMac(bleConnect.getMacStr());
+                    if (bleDevice == null) {
+                        showMessage.showMessage("蓝牙未连接");
+                        return;
+                    }else{
+                        bleConnect.send(para);
+                    }
+                }else{
+                    if(BleBlue_ConnectHelper.getInstance().isBooleanConnected()){
+                        BleBlue_ConnectHelper.getInstance().send(para);
+                    }else{
+                        showMessage.showMessage("蓝牙未连接");
+                    }
+                }
+
+                break;
         }
 
     }

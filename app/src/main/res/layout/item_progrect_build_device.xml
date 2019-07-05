@@ -43,9 +43,9 @@
             android:layout_width="64dp"
             android:layout_height="26dp"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/selector_sure_button_content_white"
+            android:background="@drawable/selector_sure_button_bg"
             android:text="未注册"
-            android:textColor="@color/color_login_button"
+            android:textColor="@color/white"
             android:textSize="12sp" />
 
         <Button
@@ -66,9 +66,9 @@
             android:layout_height="26dp"
             android:layout_marginLeft="10dp"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/selector_sure_button_bg"
+            android:background="@drawable/selector_sure_button_content_white"
             android:text="查看结果"
-            android:textColor="@color/white"
+            android:textColor="@color/color_login_button"
             android:textSize="12sp" />
 
 

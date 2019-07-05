@@ -10,31 +10,33 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.northmeter.equipmentcloud.R;
+import com.northmeter.equipmentcloud.base.BaseActivity;
 import com.northmeter.equipmentcloud.bluetooth.bluetooth.tools.BluetoothScanClient;
 import com.northmeter.equipmentcloud.bluetooth.bluetooth.view.DeviceListItemView;
 
 import java.util.ArrayList;
 
 @SuppressLint("NewApi")
-public class DeviceListActivity extends AppCompatActivity implements View.OnClickListener, BluetoothAdapter.LeScanCallback {
+public class DeviceListActivity extends BaseActivity implements View.OnClickListener, BluetoothAdapter.LeScanCallback {
     public static final String DATA_DEVICE = "DEVICE";
     String TAG = getClass().getSimpleName();
 
     public static final int REQUEST_DEVICE = 0X01;
     private ListView lv;
-    private TextView confirm, cancel;
+    private TextView confirm;
+    private ImageView cancel;
 
     private DeviceAdapter adapter;
     ArrayList<BluetoothDevice> devices;
@@ -56,12 +58,14 @@ public class DeviceListActivity extends AppCompatActivity implements View.OnClic
     public static final String TOAST = "toast";
 
     @Override
+    protected int getLayoutId() {
+        return R.layout.activity_bluetooth_device_list;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
-            setContentView(R.layout.activity_bluetooth_device_list);
-
-
             mScanClient = BluetoothScanClient.getInstance(this, this);
             if(!mScanClient.isBluetoothOpen()){
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -70,7 +74,7 @@ public class DeviceListActivity extends AppCompatActivity implements View.OnClic
                 mScanClient.startScan();
             }
             initView();
-            initData();
+            initDatas();
             initListener();
         }catch(Exception e){
             e.printStackTrace();;
@@ -104,7 +108,7 @@ public class DeviceListActivity extends AppCompatActivity implements View.OnClic
         mScanClient.destroy();
     }
 
-    private void initData() {
+    public void initDatas() {
 //		ArrayList<DeviceInfo> dd = new ArrayList<DeviceInfo>();
 //		for(int i=0;i<5;i++){
 //			dd.add(new DeviceInfo("iFever"+i,"address"+i));
@@ -118,7 +122,7 @@ public class DeviceListActivity extends AppCompatActivity implements View.OnClic
     private void initView() {
         lv = (ListView) findViewById(R.id.device_list);
         confirm = (TextView) findViewById(R.id.confirm);
-        cancel = (TextView) findViewById(R.id.cancel);
+        cancel = (ImageView) findViewById(R.id.cancel);
         lv.setEmptyView(findViewById(R.id.empty_view));
     }
 
@@ -163,15 +167,10 @@ public class DeviceListActivity extends AppCompatActivity implements View.OnClic
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
         if (device == null || device.getName() == null) return;
         Log.w(TAG, "onLeScan: device == " + device.getAddress() + " == " + device.getName());
-            /*for (BluetoothConnectionClient c : mClients) {
-                if (c.getDevice().getAddress().equals(device.getAddress())) return;
-            }*/
-//        if (device.getName().startsWith("iUart")) {
-            if (checkDeviceExist(device)) {
-                Message msg = mHandler.obtainMessage(1);
-                msg.obj = device;
-                mHandler.sendMessage(msg);
-//            }
+        if (checkDeviceExist(device)) {
+            Message msg = mHandler.obtainMessage(1);
+            msg.obj = device;
+            mHandler.sendMessage(msg);
         }
     }
 

@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.northmeter.equipmentcloud.I.I_ShowSingleSelfChecking;
@@ -40,6 +41,8 @@ public class ProgectSelfCheckingDeviceResultActivity extends BaseActivity implem
     TextView dataValueShow;
     @BindView(R.id.view_show)
     View viewShow;
+    @BindView(R.id.linear_data_value)
+    LinearLayout linearDataValue;
 
     private int recordId;
     private String equipmentName;
@@ -96,7 +99,7 @@ public class ProgectSelfCheckingDeviceResultActivity extends BaseActivity implem
 
     @Override
     public void showData(SingleSelfCheckingResultResponse.ResultBean resultBean) {
-        if (resultBean.getImplementResult()!=null&&resultBean.getImplementResult().equals("0")) {
+        if (resultBean.getImplementResult() != null && resultBean.getImplementResult().equals("0")) {
             imSelfCheckResult.setImageResource(R.drawable.self_device_result_true);
         } else {
             imSelfCheckResult.setImageResource(R.drawable.self_device_result_false);
@@ -105,8 +108,14 @@ public class ProgectSelfCheckingDeviceResultActivity extends BaseActivity implem
         tvProgrectName.setText(resultBean.getEquipmentName());
         tvProgrectAddress.setText(resultBean.getInstallAddress());
         tvProgrectTime.setText(resultBean.getEndTime());
-        dataValueTitle.setText("识别结果");
-        dataValueShow.setText(String.valueOf(resultBean.getDataValue()));
+        if(resultBean.getGatewaySoft()==null){
+            dataValueTitle.setText("识别结果");
+            dataValueShow.setText(String.valueOf(resultBean.getDataValue()));
+        }else{
+            dataValueTitle.setText("软件版本");
+            dataValueShow.setText(resultBean.getGatewaySoft());
+        }
+
 
     }
 

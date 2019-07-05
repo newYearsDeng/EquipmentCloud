@@ -8,13 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.fragment.app.DialogFragment;
+
 import com.northmeter.equipmentcloud.R;
 
 
 /**
  * Created by benjamin on 16/5/12.
  */
-public class DialogConfirm extends android.support.v4.app.DialogFragment {
+public class DialogConfirm extends DialogFragment {
     private DialogInterface.OnClickListener mOnClickListener;
     private int title;
     public void setOnClickListener(DialogInterface.OnClickListener onClickListener) {

@@ -2,26 +2,25 @@ package com.northmeter.equipmentcloud.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.northmeter.equipmentcloud.I.IShowSMainMessage;
 import com.northmeter.equipmentcloud.base.MyApplication;
 import com.northmeter.equipmentcloud.bean.EvenBusBean;
-import com.northmeter.equipmentcloud.bluetooth.bluetooth.tools.BluetoothConnectionClient;
 import com.northmeter.equipmentcloud.bluetooth.bt_bluetooth.BluetoothChatService;
 import com.northmeter.equipmentcloud.enumBean.EvenBusEnum;
-import com.northmeter.equipmentcloud.utils.Udp_Help;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.lang.reflect.Method;
+import java.util.Set;
+
 import static com.northmeter.equipmentcloud.activity.LocationSet_NBDevice.DEVICE_NAME;
-import static com.northmeter.equipmentcloud.bluetooth.bluetooth.blueActivity.DeviceListActivity.TOAST;
 
 /**
  * Created by dyd on 2019/3/11.
+ * 高速蓝牙
  */
 
 public class BlueTooth_ConnectHelper implements IShowSMainMessage {
@@ -65,6 +64,10 @@ public class BlueTooth_ConnectHelper implements IShowSMainMessage {
          mChatService.connect(device);
     }
 
+    public void stopBlueToothConnect(){
+        mChatService.stop();
+    }
+
     private Handler btHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -77,7 +80,7 @@ public class BlueTooth_ConnectHelper implements IShowSMainMessage {
                             setBooleanConnected(true);
                             setmChatService(mChatService);
 
-                            sendEventBus(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName(), "蓝牙连接成功");
+                            sendEventBus(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName(), "已连接"+mConnectedDeviceName);
 
                             int state = BlueTooth_UniqueInstance.getInstance().getState();
                             if(state == 20||state == 24||state==26){
@@ -93,13 +96,13 @@ public class BlueTooth_ConnectHelper implements IShowSMainMessage {
                         case BluetoothChatService.STATE_NONE:
                             setBooleanConnected(false);
                             setmConnectedDeviceName("连接失败");
-                            sendEventBus(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName(), "连接蓝牙失败");
+                            sendEventBus(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName(), "连接失败");
                             System.out.println("连接失败");
                             break;
                         case BluetoothChatService.STATE_STOP:
                             setBooleanConnected(false);
                             setmConnectedDeviceName("连接断开");
-                            sendEventBus(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName(), "蓝牙连接断开");
+                            sendEventBus(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName(), "连接断开");
                             System.out.println("断开连接");
                             break;
                     }
@@ -149,7 +152,7 @@ public class BlueTooth_ConnectHelper implements IShowSMainMessage {
                     setBooleanConnected(false);
                     setmConnectedDeviceName("连接断开");
                     System.out.println("连接断开");
-                    sendEventBus(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName(), "蓝牙连接断开");
+                    sendEventBus(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName(), "连接断开");
                     //dataChange.setDataChange("连接断开");
                     //showMsg(msg.getData().getString(TOAST));
                     break;
@@ -204,5 +207,27 @@ public class BlueTooth_ConnectHelper implements IShowSMainMessage {
 
     public static void setmConnectedDeviceName(String mConnectedDeviceName) {
         BlueTooth_ConnectHelper.mConnectedDeviceName = mConnectedDeviceName;
+    }
+
+    public void removeBondDevice(String removeID){
+        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
+                if(device.getAddress().equals(removeID)){
+                    try {
+                        removeBond(device.getClass(),device);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }
+    }
+
+    public static boolean removeBond(Class btClass,BluetoothDevice btDevice) throws Exception {
+        Method removeBondMethod = btClass.getMethod("removeBond");
+        Boolean returnValue = (Boolean) removeBondMethod.invoke(btDevice);
+        return returnValue.booleanValue();
     }
 }

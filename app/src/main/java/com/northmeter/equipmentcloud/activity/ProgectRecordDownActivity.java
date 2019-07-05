@@ -2,15 +2,15 @@ package com.northmeter.equipmentcloud.activity;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import com.google.android.material.tabs.TabLayout;
 import com.northmeter.equipmentcloud.R;
 import com.northmeter.equipmentcloud.base.BaseActivity;
-import com.northmeter.equipmentcloud.fragment.Fragment_ProgectList;
 import com.northmeter.equipmentcloud.fragment.Fragment_RecordDownLoadList;
 import com.northmeter.equipmentcloud.widget.EmptyFragmentPagerAdapter;
 import com.northmeter.equipmentcloud.widget.NoScrollViewPager;

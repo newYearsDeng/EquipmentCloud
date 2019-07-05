@@ -6,7 +6,7 @@ package com.northmeter.equipmentcloud.I;
 
 public interface I_ProgectDeviceAddPresenter {
     void addBuildingequipment(String equipmentName,String itemTypeId,int buildingId,int projectId,String key,
-    String terminalPort,String ipcNum,String concentratorName,String collectorName,String configurationPlanName);
+    String terminalPort,String ipcNum,String concentratorName,String collectorName,String configurationPlanName,int needDownRecord);
 
     void getConfigurationPlan(String projectName);
 

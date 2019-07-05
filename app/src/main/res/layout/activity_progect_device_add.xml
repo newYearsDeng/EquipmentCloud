@@ -94,19 +94,6 @@
                 <TextView
                     style="@style/device_add_text_left"
                     android:textColor="#9E9FA4"
-                    android:text="配置方案" />
-
-                <TextView
-                    android:id="@+id/tv_device_plan"
-                    style="@style/device_add_text_right"
-                    android:hint="请选择" />
-            </RelativeLayout>
-
-            <RelativeLayout style="@style/device_add_layout">
-
-                <TextView
-                    style="@style/device_add_text_left"
-                    android:textColor="#9E9FA4"
                     android:text="密钥" />
 
                 <EditText
@@ -120,12 +107,40 @@
                 <TextView
                     style="@style/device_add_text_left"
                     android:textColor="#9E9FA4"
+                    android:text="下载档案" />
+
+                <TextView
+                    android:id="@+id/tv_device_needdown"
+                    android:layout_width="100dp"
+                    style="@style/device_add_text_right"
+                    android:hint="请选择" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_add_layout">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:textColor="#9E9FA4"
+                    android:text="配置方案" />
+
+                <TextView
+                    android:id="@+id/tv_device_plan"
+                    style="@style/device_add_text_right"
+                    android:hint="请选择" />
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/device_add_layout">
+
+                <TextView
+                    style="@style/device_add_text_left"
+                    android:textColor="#9E9FA4"
                     android:text="端口" />
 
-                <EditText
+                <TextView
                     android:id="@+id/tv_device_port"
+                    android:layout_width="100dp"
                     style="@style/device_add_text_right"
-                    android:hint="请输入" />
+                    android:hint="请选择" />
             </RelativeLayout>
 
             <Button

@@ -2,23 +2,30 @@ package com.northmeter.equipmentcloud.activity;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.northmeter.equipmentcloud.I.I_ShowDeviceDetail;
 import com.northmeter.equipmentcloud.R;
 import com.northmeter.equipmentcloud.base.BaseActivity;
 import com.northmeter.equipmentcloud.bean.EvenBusBean;
 import com.northmeter.equipmentcloud.bean.ProgectDeviceDetailResponse;
+import com.northmeter.equipmentcloud.bluetooth.AllScanDeviceListActivity;
+import com.northmeter.equipmentcloud.bluetooth.BleBlue_ConnectHelper;
+import com.northmeter.equipmentcloud.bluetooth.BleConnect_InstanceHelper;
 import com.northmeter.equipmentcloud.bluetooth.BlueTooth_ConnectHelper;
 import com.northmeter.equipmentcloud.bluetooth.bt_bluetooth.BtDeviceListActivity;
 import com.northmeter.equipmentcloud.enumBean.EvenBusEnum;
 import com.northmeter.equipmentcloud.presenter.ProgectBuildDeviceDetailPresenter;
+import com.northmeter.equipmentcloud.widget.CommonDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -26,6 +33,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
+import static com.northmeter.equipmentcloud.bluetooth.AllScanDeviceListActivity.DATA_TYPE;
+import static com.northmeter.equipmentcloud.bluetooth.bluetooth.blueActivity.DeviceListActivity.DATA_DEVICE;
 
 /**
  * Created by dyd on 2019/3/1.
@@ -65,6 +75,8 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
     Button btnSetXyPara;
     @BindView(R.id.btn_set_local_para)
     Button btnSetLocalPara;
+    @BindView(R.id.btn_cancle_register)
+    Button btnCancleRregister;
 
     private final static int FIND_BLUETOOTH_CODE = 1;
     private static final int REQUEST_CONNECT_DEVICE = 2;
@@ -125,6 +137,7 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
             btnGetNetworkPicture.setVisibility(View.GONE);
             btnSetXyPara.setVisibility(View.GONE);
             btnSetLocalPara.setVisibility(View.GONE);
+            btnCancleRregister.setVisibility(View.GONE);
         } else {
             tvRightText.setText("蓝牙");
         }
@@ -175,19 +188,48 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
                     showMsg("该功能需要打开手机蓝牙");
                 }
                 break;
+            case AllScanDeviceListActivity.REQUEST_DEVICE://同时搜索BT和BLE蓝牙
+                if (resultCode == Activity.RESULT_OK) {
+                    //断开蓝牙
+                    BlueTooth_ConnectHelper.getInstance().stopBlueToothConnect();
+                    BleConnect_InstanceHelper.getInstance().cancelConnect();
+                    BleBlue_ConnectHelper.getInstance().cancelConnect();
+
+                    int type = data.getExtras().getInt(DATA_TYPE);
+                    BluetoothDevice checkedDevice = data.getExtras().getParcelable(DATA_DEVICE);
+                    BlueTooth_ConnectHelper.getInstance().removeBondDevice(checkedDevice.getAddress());
+                    if(type == 0){//BT
+                        BlueTooth_ConnectHelper.getInstance().blueToothConnect(checkedDevice.getAddress());
+                    }else{
+                        if(Build.VERSION.SDK_INT > 23){
+                            BleConnect_InstanceHelper bleConnect = BleConnect_InstanceHelper.getInstance();
+                            bleConnect.setMacStr(checkedDevice.getAddress());
+                            bleConnect.connecedDevice();
+                        }else{
+                            BleBlue_ConnectHelper.getInstance().blueToothConnect(checkedDevice);
+                        }
+                    }
+                }
+                break;
         }
     }
 
+    CommonDialog commonDialog;
     @OnClick({R.id.btn_tb_back, R.id.tv_right_text, R.id.btn_get_local_picture, R.id.btn_get_network_picture,
-            R.id.btn_set_xy_para, R.id.btn_set_local_para})
+            R.id.btn_set_xy_para, R.id.btn_set_local_para, R.id.btn_cancle_register})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_tb_back:
                 this.finish();
                 break;
             case R.id.tv_right_text:
-                Intent serverIntent = new Intent(this, BtDeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+                if(true){
+                    Intent intent = new Intent(this, AllScanDeviceListActivity.class);
+                    startActivityForResult(intent, AllScanDeviceListActivity.REQUEST_DEVICE);
+                }else {
+                    Intent serverIntent = new Intent(this, BtDeviceListActivity.class);
+                    startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+                }
                 break;
             case R.id.btn_get_local_picture://获取本地图片
                 if (BlueTooth_ConnectHelper.getInstance().isBooleanConnected()) {
@@ -217,6 +259,22 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
                     showMsg("未连接蓝牙");
                 }
                 break;
+            case R.id.btn_cancle_register:
+                 commonDialog = new CommonDialog(this,
+                        R.layout.dialog_devie_delete, "是否撤销设备注册？",new CommonDialog.CallBack() {
+                    @Override
+                    public void onConfirm() {
+                        progectBuildDeviceDetailPresenter.cancelRegister(recordId);
+                        commonDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        commonDialog.dismiss();
+                    }
+                });
+                commonDialog.show();
+                break;
         }
     }
 
@@ -237,6 +295,9 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
             case 1:
                 tvActivationMode.setText("已注册");
                 break;
+            default:
+                tvUsedState.setText("未知");
+                break;
         }
         switch (deviceInfo.getActivationMode()) {//激活状态 0-未激活，1—激活中，2-激活成功，3-激活失败，4，是否是可激活设备
             case 0:
@@ -254,13 +315,16 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
             case 4:
                 tvUsedState.setText("不可激活");
                 break;
+            default:
+                tvUsedState.setText("未知");
+                break;
         }
 
 
     }
 
     @Override
-    public void returnFail(String msg) {
+    public void returnMessage(String msg) {
         showMsg(msg);
     }
 

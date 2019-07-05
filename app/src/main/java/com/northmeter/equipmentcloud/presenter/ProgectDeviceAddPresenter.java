@@ -5,11 +5,9 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.model.Response;
 import com.northmeter.equipmentcloud.I.I_ProgectDeviceAddPresenter;
 import com.northmeter.equipmentcloud.I.I_ShowDeviceAdd;
-import com.northmeter.equipmentcloud.I.I_ShowReturnData;
 import com.northmeter.equipmentcloud.base.API;
 import com.northmeter.equipmentcloud.bean.CommonResponse;
 import com.northmeter.equipmentcloud.bean.ConfigurationPlanResponse;
@@ -35,7 +33,7 @@ public class ProgectDeviceAddPresenter implements I_ProgectDeviceAddPresenter {
     @Override
     public void addBuildingequipment(String equipmentName,String itemTypeId,int buildingId,int projectId,String key,
                                      String terminalPort,String ipcNum,String concentratorName,String collectorName,
-                                     String configurationPlanName) {
+                                     String configurationPlanName,int needDownRecord) {
         Map mapList = new HashMap();
         mapList.put("equipmentName",equipmentName);
         mapList.put("itemTypeId",itemTypeId);
@@ -47,6 +45,7 @@ public class ProgectDeviceAddPresenter implements I_ProgectDeviceAddPresenter {
         mapList.put("concentratorName",concentratorName);
         mapList.put("collectorName",collectorName);
         mapList.put("configurationPlanName",configurationPlanName);
+        mapList.put("needDownRecord",needDownRecord);
 
         OkGo.<CommonResponse>post(API.addBuildingequipment)
                 .tag(this)

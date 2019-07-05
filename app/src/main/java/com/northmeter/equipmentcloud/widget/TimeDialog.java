@@ -1,12 +1,12 @@
 package com.northmeter.equipmentcloud.widget;
 
 import android.content.Context;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import androidx.appcompat.app.AlertDialog;
 
 import com.northmeter.equipmentcloud.R;
 import com.northmeter.equipmentcloud.widget.time.WheelView;

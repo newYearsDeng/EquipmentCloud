@@ -28,14 +28,14 @@ public class BlueTooth_UniqueInstance{
     /**蓝牙对象*/
     private BluetoothConnectionClient connectionClient;
 
-    /**bt蓝牙对象*/
-    private static BluetoothChatService bluetoothChatService = null;
-
     /**表号*/
     private String tableNum;
 
     /**state判断是否结束进度条 state 0 ：表示安装测试界面的操作，1,2表示设置界面的操作，3：表示主从读取模式的拍照*/
     private int state = 0;
+
+    /**判断连接的是BT蓝牙还是BLE蓝牙，0表示BT，1表示BLE*/
+    private int blueType = 0;
 
 
 
@@ -67,14 +67,13 @@ public class BlueTooth_UniqueInstance{
         this.state = state;
     }
 
-    public static BluetoothChatService getBluetoothChatService() {
-        return bluetoothChatService;
+    public int getBlueType() {
+        return blueType;
     }
 
-    public static void setBluetoothChatService(BluetoothChatService bluetoothChatService) {
-        BlueTooth_UniqueInstance.bluetoothChatService = bluetoothChatService;
+    public void setBlueType(int blueType) {
+        this.blueType = blueType;
     }
-
 
     public String getTableNum() {
         return tableNum;

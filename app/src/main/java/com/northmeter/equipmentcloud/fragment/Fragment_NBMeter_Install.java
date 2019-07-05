@@ -1,10 +1,6 @@
 package com.northmeter.equipmentcloud.fragment;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -12,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -24,12 +19,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-
 import com.northmeter.equipmentcloud.I.IShowAnalysisPic;
-import com.northmeter.equipmentcloud.I.IShowSMainMessage;
 import com.northmeter.equipmentcloud.I.I_ShowBlueSend;
 import com.northmeter.equipmentcloud.R;
-import com.northmeter.equipmentcloud.activity.LocationSet_NBDevice;
 import com.northmeter.equipmentcloud.base.BaseFragment;
 import com.northmeter.equipmentcloud.base.Constants;
 import com.northmeter.equipmentcloud.base.ToastUtil;
@@ -51,7 +43,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
@@ -124,12 +115,12 @@ public class Fragment_NBMeter_Install extends BaseFragment implements DragScaleV
         sendBlueMessage = new SendBlueMessage(this);
         projectId = getActivity().getIntent().getIntExtra("projectId",0);
         equipmentNum = getActivity().getIntent().getStringExtra("equipmentNum");
+        //equipmentNum = SharedPreferencesUtil.getPrefString(getActivity(),"BlueNumber","000000000000");
         if(equipmentNum==null){
             equipmentNum = "000000000000";
         }
     }
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         EventBus.getDefault().register(this);
@@ -161,6 +152,7 @@ public class Fragment_NBMeter_Install extends BaseFragment implements DragScaleV
     @Override
     public void afterTextChanged(Editable s) {
         BlueTooth_UniqueInstance.getInstance().setTableNum(edittextTablenum.getText().toString());
+        SharedPreferencesUtil.setPrefString(getActivity(),"BlueNumber",edittextTablenum.getText().toString());
     }
 
     @OnClick({R.id.button_para_select, R.id.button_para_setting,R.id.button_analysis_picture})
@@ -480,10 +472,12 @@ public class Fragment_NBMeter_Install extends BaseFragment implements DragScaleV
         String topic = evenBusBean.getTopic();
         if(topic.equals(EvenBusEnum.EvenBus_NBMeter_Install.getEvenName())){
             String data = evenBusBean.getData();
-
             Message msg = handler.obtainMessage(1);
             msg.obj = data;
             Fragment_NBMeter_Install.this.handler.sendMessage(msg);
+        }else if (topic.equals(EvenBusEnum.EvenBus_BlueTooth_Connect.getEvenName())) {
+            connectFlag.setText(evenBusBean.getData());
+            showMsg(evenBusBean.getData());
         }
 
 

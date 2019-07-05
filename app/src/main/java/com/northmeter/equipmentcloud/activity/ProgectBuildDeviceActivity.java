@@ -2,9 +2,11 @@ package com.northmeter.equipmentcloud.activity;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.os.Vibrator;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -15,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.andview.refreshview.XRefreshView;
 import com.northmeter.equipmentcloud.I.I_ShowBlueSend;
 import com.northmeter.equipmentcloud.I.I_ShowBuildDevice;
@@ -24,10 +28,12 @@ import com.northmeter.equipmentcloud.adapter.ViewHolder;
 import com.northmeter.equipmentcloud.base.BaseActivity;
 import com.northmeter.equipmentcloud.bean.EvenBusBean;
 import com.northmeter.equipmentcloud.bean.ProgectBuildDeviceResponse;
+import com.northmeter.equipmentcloud.bluetooth.AllScanDeviceListActivity;
+import com.northmeter.equipmentcloud.bluetooth.BleBlue_ConnectHelper;
+import com.northmeter.equipmentcloud.bluetooth.BleConnect_InstanceHelper;
 import com.northmeter.equipmentcloud.bluetooth.BlueTooth_ConnectHelper;
 import com.northmeter.equipmentcloud.bluetooth.BlueTooth_UniqueInstance;
 import com.northmeter.equipmentcloud.bluetooth.SendBlueMessage;
-import com.northmeter.equipmentcloud.bluetooth.bt_bluetooth.BtDeviceListActivity;
 import com.northmeter.equipmentcloud.camera.activity.CaptureActivity;
 import com.northmeter.equipmentcloud.enumBean.EvenBusEnum;
 import com.northmeter.equipmentcloud.presenter.ProgectBuildDevicePresenter;
@@ -42,6 +48,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
+import static com.northmeter.equipmentcloud.bluetooth.AllScanDeviceListActivity.DATA_TYPE;
+import static com.northmeter.equipmentcloud.bluetooth.bluetooth.blueActivity.DeviceListActivity.DATA_DEVICE;
 
 /**
  * Created by dyd on 2019/2/27.
@@ -91,6 +100,8 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements XRefresh
     private int doRecordId;
     private String doItemTypeId, doEquipmentId, doEquipmentNum, fileName, doEquipmentName;
 
+    private Vibrator vibrator;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_progect_build_device;
@@ -99,6 +110,7 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements XRefresh
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
     }
 
     @Override
@@ -213,11 +225,31 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements XRefresh
                 }
                 break;
             case REQUEST_CONNECT_DEVICE://高速蓝牙
+//                if (resultCode == Activity.RESULT_OK) {
+//                    progectBuildDevicePresenter.startLoadingDialog();
+//                    String address = data.getExtras().getString(
+//                            BtDeviceListActivity.EXTRA_DEVICE_ADDRESS);
+//                    BlueTooth_ConnectHelper.getInstance().blueToothConnect(address);
+//                }
                 if (resultCode == Activity.RESULT_OK) {
-                    progectBuildDevicePresenter.startLoadingDialog();
-                    String address = data.getExtras().getString(
-                            BtDeviceListActivity.EXTRA_DEVICE_ADDRESS);
-                    BlueTooth_ConnectHelper.getInstance().blueToothConnect(address);
+                    //断开蓝牙
+                    BlueTooth_ConnectHelper.getInstance().stopBlueToothConnect();
+                    BleConnect_InstanceHelper.getInstance().cancelConnect();
+                    BleBlue_ConnectHelper.getInstance().cancelConnect();
+
+                    int type = data.getExtras().getInt(DATA_TYPE);
+                    BluetoothDevice checkedDevice = data.getExtras().getParcelable(DATA_DEVICE);
+                    if(type == 0){//BT
+                        BlueTooth_ConnectHelper.getInstance().blueToothConnect(checkedDevice.getAddress());
+                    }else{
+                        if(Build.VERSION.SDK_INT > 23){
+                            BleConnect_InstanceHelper bleConnect = BleConnect_InstanceHelper.getInstance();
+                            bleConnect.setMacStr(checkedDevice.getAddress());
+                            bleConnect.connecedDevice();
+                        }else{
+                            BleBlue_ConnectHelper.getInstance().blueToothConnect(checkedDevice);
+                        }
+                    }
                 }
                 break;
             case REQUEST_ENABLE_BT:
@@ -258,8 +290,10 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements XRefresh
                                             sendBlueMessage.sendBTblueMessage(progectBuildDevicePresenter.sendNBActiveORResiger(doEquipmentNum), 25);
                                         } else {
                                             BlueTooth_UniqueInstance.getInstance().setState(24);
-                                            Intent serverIntent = new Intent(ProgectBuildDeviceActivity.this, BtDeviceListActivity.class);
-                                            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+                                            //Intent serverIntent = new Intent(ProgectBuildDeviceActivity.this, BtDeviceListActivity.class);
+                                            //startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+                                            Intent intent = new Intent(ProgectBuildDeviceActivity.this, AllScanDeviceListActivity.class);
+                                            startActivityForResult(intent, REQUEST_CONNECT_DEVICE);
                                         }
                                         break;
                                     default://设备激活
@@ -269,8 +303,10 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements XRefresh
                                                 sendBlueMessage.sendBTblueMessage(progectBuildDevicePresenter.sendNBActiveORResiger(doEquipmentNum), 23);
                                             } else {
                                                 BlueTooth_UniqueInstance.getInstance().setState(26);
-                                                Intent serverIntent = new Intent(ProgectBuildDeviceActivity.this, BtDeviceListActivity.class);
-                                                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+                                                //Intent serverIntent = new Intent(ProgectBuildDeviceActivity.this, BtDeviceListActivity.class);
+                                                //startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+                                                Intent intent = new Intent(ProgectBuildDeviceActivity.this, AllScanDeviceListActivity.class);
+                                                startActivityForResult(intent, REQUEST_CONNECT_DEVICE);
                                             }
                                         }else{
                                             if (BlueTooth_ConnectHelper.getInstance().isBooleanConnected()) {
@@ -281,8 +317,10 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements XRefresh
                                                 }
                                             } else {
                                                 BlueTooth_UniqueInstance.getInstance().setState(20);
-                                                Intent serverIntent = new Intent(ProgectBuildDeviceActivity.this, BtDeviceListActivity.class);
-                                                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+                                                //Intent serverIntent = new Intent(ProgectBuildDeviceActivity.this, BtDeviceListActivity.class);
+                                                //startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+                                                Intent intent = new Intent(ProgectBuildDeviceActivity.this, AllScanDeviceListActivity.class);
+                                                startActivityForResult(intent, REQUEST_CONNECT_DEVICE);
                                             }
                                         }
                                         break;
@@ -437,6 +475,22 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements XRefresh
                     }
                 });
 
+                helper.getView(R.id.linear_buildlist).setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        if(vibrator.hasVibrator()) {
+                            vibrator.vibrate(20); //参数标识  震动持续毫秒
+                        }
+                        tvRightText.setVisibility(View.VISIBLE);
+                        btnDeviceDelSure.setVisibility(View.VISIBLE);
+                        ivDeviceDelete.setVisibility(View.GONE);
+                        ivDeviceAdd.setVisibility(View.GONE);
+                        showOrHide = true;
+                        commonAdapter.notifyDataSetChanged();
+                        return false;
+                    }
+                });
+
             }
         };
 
@@ -480,7 +534,7 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements XRefresh
                 break;
             case R.id.btn_device_del_sure://确认删除按钮
                 commonDialog = new CommonDialog(this,
-                        R.layout.dialog_devie_delete, new CommonDialog.CallBack() {
+                        R.layout.dialog_devie_delete, "是否删除设备？",new CommonDialog.CallBack() {
                     @Override
                     public void onConfirm() {
                         progectBuildDevicePresenter.deleteEquipment(datas, 1);
@@ -620,3 +674,15 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements XRefresh
     }
 
 }
+
+
+/**
+ * 1.根据获取注册状态（0-未注册，1-已经注册），判断设备是否注册，未注册时按钮显示为“未注册”，点击按钮进行注册流程；
+ 2.注册状态为 已经注册时，根据激活状态（0-未激活，1—激活中，2-激活成功，3-激活失败，4，不可激活设备）进行分类处理；
+ a.激活状态为4（不可激活设备），显示此设备不可激活，等待主节点设备的测试。
+ b.激活状态为0（未激活），按钮显示未激活，可点击激活；
+ c.激活状态为1（激活中），按钮显示激活中，不可点击；
+ d.激活状态为2（激活成功），查询测试状态implementStatus（0-执行中 1-已执行完毕 2—未测试过），测试状态为0时按钮显示为灰色（不可点击）“测试中”；测试状态为1或者2时，根据测试结果ImplementResult（0-测试成功 1-测试失败）确定按钮的显示，此时按钮可再次点击进行测试。
+
+ e.激活状态为3（激活失败），按钮显示激活失败，点击可重新进入激活流程；
+ */

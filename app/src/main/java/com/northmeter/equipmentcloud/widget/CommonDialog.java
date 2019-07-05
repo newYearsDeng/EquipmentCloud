@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.northmeter.equipmentcloud.R;
 
@@ -22,12 +23,14 @@ public class CommonDialog<T> extends Dialog{
     private Context context;
     private int layoutID;
     private CallBack callBack;
+    private String title;
 
-    public CommonDialog(Context context, int layoutID, CallBack callBack) {
+    public CommonDialog(Context context, int layoutID, String title, CallBack callBack) {
         super(context,R.style.dialog);
         this.context = context;
         this.layoutID = layoutID;
         this.callBack = callBack;
+        this.title = title;
     }
     public CommonDialog(Context context) {
         super(context, R.style.dialog);
@@ -59,6 +62,9 @@ public class CommonDialog<T> extends Dialog{
         window.setAttributes(lp);
         //将自定义布局加载到dialog上
         setContentView(dialogView);
+
+        TextView dialog_title = dialogView.findViewById(R.id.tv_dialog_title);
+        dialog_title.setText(title);
 
         Button summit = dialogView.findViewById(R.id.btn_summit);
         summit.setOnClickListener(new View.OnClickListener() {

@@ -1,11 +1,7 @@
 package com.northmeter.equipmentcloud.activity;
 
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.View;
@@ -16,14 +12,17 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.northmeter.equipmentcloud.I.I_ShowDeviceAdd;
-import com.northmeter.equipmentcloud.I.I_ShowReturnData;
 import com.northmeter.equipmentcloud.R;
 import com.northmeter.equipmentcloud.adapter.CommonAdapter;
+import com.northmeter.equipmentcloud.adapter.ViewHolder;
 import com.northmeter.equipmentcloud.base.BaseActivity;
+import com.northmeter.equipmentcloud.bean.CommunicationPortResponse;
 import com.northmeter.equipmentcloud.bean.ConfigurationPlanResponse;
 import com.northmeter.equipmentcloud.bean.ProjetTypeResponse;
-import com.northmeter.equipmentcloud.bean.RecordImportResponse;
+import com.northmeter.equipmentcloud.enumBean.CommunicationEnum;
 import com.northmeter.equipmentcloud.presenter.ProgectDeviceAddPresenter;
 
 import java.util.ArrayList;
@@ -55,15 +54,20 @@ public class ProgectDeviceAddActivity extends BaseActivity implements I_ShowDevi
     @BindView(R.id.tv_device_secret_key)
     EditText tvDeviceSecretKey;
     @BindView(R.id.tv_device_port)
-    EditText tvDevicePort;
+    TextView tvDevicePort;
+    @BindView(R.id.tv_device_needdown)
+    TextView tvDeviceNeeddown;
 
-    private int projectId,recordId;
+    private int projectId, recordId;
     private String projectName;
     private ProgectDeviceAddPresenter progectDeviceAddPresenter;
-    private ListView listview;//方案列表
+    private ListView listview;
     private CommonAdapter commonAdapter;
     private List<ConfigurationPlanResponse.PlanBean> planDatas = new ArrayList();
     private List<ProjetTypeResponse.PageList> typeDatas = new ArrayList();
+    List<CommunicationPortResponse.PortBean> portDatas = new ArrayList<>();
+    private int isNeeddown=0;
+    private String checkPort;
 
     @Override
     protected int getLayoutId() {
@@ -95,6 +99,11 @@ public class ProgectDeviceAddActivity extends BaseActivity implements I_ShowDevi
         progectDeviceAddPresenter = new ProgectDeviceAddPresenter(this);
         progectDeviceAddPresenter.getConfigurationPlan(projectName);
         progectDeviceAddPresenter.getProjetType();
+
+        for (CommunicationEnum item : CommunicationEnum.values()) {
+            portDatas.add(new CommunicationPortResponse.PortBean(item.getPortName(), item.getPortValue()));
+        }
+
     }
 
     @Override
@@ -102,30 +111,37 @@ public class ProgectDeviceAddActivity extends BaseActivity implements I_ShowDevi
         super.onDestroy();
     }
 
-    @OnClick({R.id.btn_tb_back, R.id.btn_device_add_sure,R.id.tv_device_plan,R.id.tv_item_type_id})
+    @OnClick({R.id.btn_tb_back, R.id.btn_device_add_sure, R.id.tv_device_plan, R.id.tv_item_type_id,
+            R.id.tv_device_port,R.id.tv_device_needdown})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_tb_back:
                 this.finish();
                 break;
             case R.id.tv_device_plan://配置方案
-                dialog_show(true);
+                dialog_show(0);
                 break;
             case R.id.tv_item_type_id://产品型号
-                dialog_show(false);
+                dialog_show(1);
+                break;
+            case R.id.tv_device_port://端口
+                dialog_show(2);
+                break;
+            case R.id.tv_device_needdown://是否下载档案
+                dialog_show(3);
                 break;
             case R.id.btn_device_add_sure:
                 progectDeviceAddPresenter.addBuildingequipment(tvDeviceName.getText().toString(),
-                        tvItemTypeID.getText().toString(),recordId,projectId,
-                        tvDeviceSecretKey.getText().toString(),tvDevicePort.getText().toString(),
-                        tvIpcNumber.getText().toString(),tvConcentratorName.getText().toString(),
-                        tvCollectorName.getText().toString(),tvDevicePlan.getText().toString());
+                        tvItemTypeID.getText().toString(), recordId, projectId,
+                        tvDeviceSecretKey.getText().toString(), checkPort,
+                        tvIpcNumber.getText().toString(), tvConcentratorName.getText().toString(),
+                        tvCollectorName.getText().toString(), tvDevicePlan.getText().toString(),isNeeddown);
                 break;
         }
     }
 
 
-    public void dialog_show(boolean planOrTypeChoice) {
+    public void dialog_show(int planOrTypeChoice) {
         final AlertDialog dialogSex = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialog)).create();
         dialogSex.show();
         Window window = dialogSex.getWindow();
@@ -166,47 +182,89 @@ public class ProgectDeviceAddActivity extends BaseActivity implements I_ShowDevi
         });
 
         listview = window.findViewById(R.id.listview);
-        if(planOrTypeChoice){
-            tv_toolbar_title.setText("配置方案");
-            commonAdapter = new CommonAdapter<ConfigurationPlanResponse.PlanBean>(this, planDatas, R.layout.item_dialog_add_device) {
-                @Override
-                public void convert(com.northmeter.equipmentcloud.adapter.ViewHolder helper, ConfigurationPlanResponse.PlanBean item) {
-                    helper.getTextViewSet(R.id.tv_add_plan_name,item.getConfigurationPlanName());
-                }
-            };
-            listview.setAdapter(commonAdapter);
-            listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    tvDevicePlan.setText(planDatas.get(position).getConfigurationPlanName());
-                    dialogSex.cancel();
-                }
-            });
-        }else{
-            tv_toolbar_title.setText("产品型号");
-            commonAdapter = new CommonAdapter<ProjetTypeResponse.PageList>(this, typeDatas, R.layout.item_dialog_add_device) {
-                @Override
-                public void convert(com.northmeter.equipmentcloud.adapter.ViewHolder helper, ProjetTypeResponse.PageList item) {
-                    helper.getTextViewSet(R.id.tv_add_plan_name,item.getItemType()+"    "+item.getSmallCategoryName());
-                }
-            };
-            listview.setAdapter(commonAdapter);
-            listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    tvItemTypeID.setText(typeDatas.get(position).getItemType());
-                    dialogSex.cancel();
-                }
-            });
+
+        switch (planOrTypeChoice) {
+            case 0:
+                tv_toolbar_title.setText("配置方案");
+                commonAdapter = new CommonAdapter<ConfigurationPlanResponse.PlanBean>(this, planDatas, R.layout.item_dialog_add_device) {
+                    @Override
+                    public void convert(ViewHolder helper, ConfigurationPlanResponse.PlanBean item) {
+                        helper.getTextViewSet(R.id.tv_add_plan_name, item.getConfigurationPlanName());
+                    }
+                };
+                listview.setAdapter(commonAdapter);
+                listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        tvDevicePlan.setText(planDatas.get(position).getConfigurationPlanName());
+                        dialogSex.cancel();
+                    }
+                });
+                break;
+            case 1:
+                tv_toolbar_title.setText("产品型号");
+                commonAdapter = new CommonAdapter<ProjetTypeResponse.PageList>(this, typeDatas, R.layout.item_dialog_add_device) {
+                    @Override
+                    public void convert(ViewHolder helper, ProjetTypeResponse.PageList item) {
+                        helper.getTextViewSet(R.id.tv_add_plan_name, item.getItemType() + "    " + item.getSmallCategoryName());
+                    }
+                };
+                listview.setAdapter(commonAdapter);
+                listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        tvItemTypeID.setText(typeDatas.get(position).getItemType());
+                        dialogSex.cancel();
+                    }
+                });
+                break;
+            case 2:
+                tv_toolbar_title.setText("通讯端口");
+                commonAdapter = new CommonAdapter<CommunicationPortResponse.PortBean>(this, portDatas, R.layout.item_dialog_add_device) {
+                    @Override
+                    public void convert(ViewHolder helper, CommunicationPortResponse.PortBean item) {
+                        helper.getTextViewSet(R.id.tv_add_plan_name, item.getPortName());
+                    }
+                };
+                listview.setAdapter(commonAdapter);
+                listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        tvDevicePort.setText(portDatas.get(position).getPortName());
+                        checkPort = portDatas.get(position).getPortValue();
+                        dialogSex.cancel();
+                    }
+                });
+                break;
+            case 3:
+                final List<String[]> needdownList = new ArrayList();
+                needdownList.add(new String[]{"N", "0"});
+                needdownList.add(new String[]{"Y", "1"});
+
+                tv_toolbar_title.setText("是否下载档案");
+                commonAdapter = new CommonAdapter<String[]>(this, needdownList, R.layout.item_dialog_add_device) {
+                    @Override
+                    public void convert(ViewHolder helper, String[] item) {
+                        helper.getTextViewSet(R.id.tv_add_plan_name, item[0]);
+                    }
+                };
+                listview.setAdapter(commonAdapter);
+                listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        tvDeviceNeeddown.setText(needdownList.get(position)[0]);
+                        isNeeddown = Integer.parseInt(needdownList.get(position)[1]);
+                        dialogSex.cancel();
+                    }
+                });
+                break;
         }
-
-
     }
 
 
     @Override
     public void showplanData(List<ConfigurationPlanResponse.PlanBean> datas) {
-        if (!datas.isEmpty()){
+        if (!datas.isEmpty()) {
             this.planDatas.clear();
             this.planDatas.addAll(datas);
         }
@@ -214,7 +272,7 @@ public class ProgectDeviceAddActivity extends BaseActivity implements I_ShowDevi
 
     @Override
     public void showTypeData(List<ProjetTypeResponse.PageList> datas) {
-        if (!datas.isEmpty()){
+        if (!datas.isEmpty()) {
             this.typeDatas.clear();
             this.typeDatas.addAll(datas);
         }

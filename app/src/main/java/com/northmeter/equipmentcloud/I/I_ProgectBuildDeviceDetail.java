@@ -6,5 +6,5 @@ package com.northmeter.equipmentcloud.I;
 
 public interface I_ProgectBuildDeviceDetail {
     void getEquipmentDetails(int recordId);
-
+    void cancelRegister(int recordId);
 }

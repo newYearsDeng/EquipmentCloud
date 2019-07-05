@@ -61,7 +61,6 @@ public class LoginPresenter implements I_LoginPresenter {
                                  super.onError(response);
                                  showReturnData.returnFail("连接失败，请稍后重试");
                              }
-                         }
-                );
+                });
     }
 }

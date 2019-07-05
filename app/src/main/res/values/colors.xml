@@ -27,7 +27,7 @@
     <color name="color_hide">#A5A5A5</color>
 
     <!--已完成项目列表颜色-->
-    <color name="color_already">#E6A546</color>
+    <color name="color_already">#22C99E</color>
     <!--未完成项目列表颜色-->
     <color name="color_noalready">#DC4F4F</color>
     <!--项目中小区名字列表颜色-->

@@ -2,11 +2,7 @@ package com.northmeter.equipmentcloud.fragment;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,10 +19,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.northmeter.equipmentcloud.I.IShowSMainMessage;
 import com.northmeter.equipmentcloud.I.I_ShowBlueSend;
 import com.northmeter.equipmentcloud.I.I_ShowFilesInBTSetting;
 import com.northmeter.equipmentcloud.R;
@@ -112,7 +106,7 @@ public class Fragment_NBMeter_Setting extends BaseFragment implements I_ShowBlue
 
     private SendBlueMessage sendBlueMessage;
     private int projectId;
-    private String equipmentId;
+    private String equipmentNum;
     private String exposure_setting;//曝光设置，自动或者手动曝光
     private String str_Enable = "34";//使能位,参考起始时间上报或者忽略起始时间上报，禁能
     private Fragment_NBMeter_SettingPresenter settingPresenter;
@@ -138,11 +132,8 @@ public class Fragment_NBMeter_Setting extends BaseFragment implements I_ShowBlue
     @Override
     protected void startGetArgument(Bundle savedInstanceState) {
         projectId = getActivity().getIntent().getIntExtra("projectId",0);
-        equipmentId = getActivity().getIntent().getStringExtra("equipmentNum");
-        if(equipmentId==null){
-            equipmentId = "000000000000";
-        }
-        BlueTooth_UniqueInstance.getInstance().setTableNum(equipmentId);
+        equipmentNum = getActivity().getIntent().getStringExtra("equipmentNum");
+        BlueTooth_UniqueInstance.getInstance().setTableNum(equipmentNum);
 
         sendBlueMessage = new SendBlueMessage(this);
 
@@ -153,7 +144,6 @@ public class Fragment_NBMeter_Setting extends BaseFragment implements I_ShowBlue
 
     @Override
     protected void finishCreateView(Bundle savedInstanceState) {
-        equipmentId = BlueTooth_UniqueInstance.getInstance().getTableNum();
     }
 
     @Override
@@ -417,7 +407,7 @@ public class Fragment_NBMeter_Setting extends BaseFragment implements I_ShowBlue
     }
 
     private void getSelectSetting(String status, int state) {
-        String firstpara = "68" + Udp_Help.reverseRst(equipmentId) +
+        String firstpara = "68" + Udp_Help.reverseRst(BlueTooth_UniqueInstance.getInstance().getTableNum()) +
                 "68110400" + status;
         String cs = Udp_Help.get_sum(firstpara).toUpperCase() + "16";
         String last = "FEFEFEFE" + firstpara + cs;
@@ -460,7 +450,7 @@ public class Fragment_NBMeter_Setting extends BaseFragment implements I_ShowBlue
         String para_str = para_x + para_y + para_xl + para_yl;
 
 
-        String para_set = "68" + Udp_Help.reverseRst(equipmentId) +
+        String para_set = "68" + Udp_Help.reverseRst(BlueTooth_UniqueInstance.getInstance().getTableNum()) +
                 "68141B004c3310ef" + Constants.HandlerKey +
                 Udp_Help.get_Stting_HexTo645(etExposureTime.getText().toString()) +
                 exposure_setting +
@@ -473,7 +463,7 @@ public class Fragment_NBMeter_Setting extends BaseFragment implements I_ShowBlue
     }
 
     private String get_TimeSet() {//38343337
-        String para_Time = "68" + Udp_Help.reverseRst(equipmentId) +
+        String para_Time = "68" + Udp_Help.reverseRst(BlueTooth_UniqueInstance.getInstance().getTableNum()) +
                 "68141B0038343337" + Constants.HandlerKey +
                 str_Enable +
                 Udp_Help.get_NBTimeTo645(tvReportingDate.getText().toString(), 0) + "33" +

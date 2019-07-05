@@ -21,10 +21,13 @@ public class GattCode {
     // main service uuid
     public static final UUID FFF_SERVICE_OTHER = UUID
             .fromString("0000ffe5-0000-1000-8000-00805f9b34fb");
+
+    //蓝牙抄控器
+    public static final UUID FFF_SERVICE = UUID
+            .fromString("6e400001-b5a3-f393-e0a9-e50e24dc4179");
+    //蓝牙摄像表
 //    public static final UUID FFF_SERVICE = UUID
-//            .fromString("0000fff0-0000-1000-8000-00805f9b34fb");
-      public static final UUID FFF_SERVICE = UUID
-              .fromString("0000ff03-0000-1000-8000-00805f9b34fb");
+//            .fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
 
 
     // characteristic
@@ -32,10 +35,19 @@ public class GattCode {
             .fromString("0000fff1-0000-1000-8000-00805f9b34fb");
     public static final UUID FFF_2 = UUID
             .fromString("0000fff2-0000-1000-8000-00805f9b34fb");
+
+    //蓝牙抄控器
     public static final UUID FFF_3 = UUID
-            .fromString("00002aff-0000-1000-8000-00805f9b34fb");
+            .fromString("6e400003-b5a3-f393-e0a9-e50e24dc4179");//NotifyCharacterist
     public static final UUID FFF_4 = UUID
-            .fromString("00002afe-0000-1000-8000-00805f9b34fb");
+            .fromString("6e400002-b5a3-f393-e0a9-e50e24dc4179");//writeCharacterist
+    //蓝牙摄像表
+//    public static final UUID FFF_3 = UUID
+//            .fromString("6e400003-b5a3-f393-e0a9-e50e24dcca9e");//NotifyCharacterist
+//    public static final UUID FFF_4 = UUID
+//            .fromString("00002afe-0000-1000-8000-00805f9b34fb");//writeCharacterist
+
+
     public static final UUID FFF_4_OHTER = UUID
             .fromString("0000ffe9-0000-1000-8000-00805f9b34fb");
     public static final UUID FFF_5 = UUID

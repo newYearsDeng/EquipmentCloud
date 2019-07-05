@@ -24,6 +24,7 @@ public class SingleSelfCheckingResultResponse extends CommonResponse{
         private String implementResult ;//	任务执行结果
         private String installAddress ;//	String 	设备的地址
         private String equipmentName ;//	String 	设备名称
+        private String gatewaySoft;//终端软件版本号
         private String imageUrl ;//	String 	图片地址url
         private double dataValue ;//double 	识别的值
         private String endTime ;//	String 	任务结束时间
@@ -50,6 +51,14 @@ public class SingleSelfCheckingResultResponse extends CommonResponse{
 
         public void setEquipmentName(String equipmentName) {
             this.equipmentName = equipmentName;
+        }
+
+        public String getGatewaySoft() {
+            return gatewaySoft;
+        }
+
+        public void setGatewaySoft(String gatewaySoft) {
+            this.gatewaySoft = gatewaySoft;
         }
 
         public String getImageUrl() {
