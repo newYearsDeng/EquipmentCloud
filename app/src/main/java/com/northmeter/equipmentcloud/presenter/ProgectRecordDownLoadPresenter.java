@@ -36,7 +36,7 @@ public class ProgectRecordDownLoadPresenter implements I_RecordDownLoadPresenter
 
     @Override
     public void getRecordDownLoadList(int projectId, String concentratorName) {
-        OkGo.<RecordDownLoadResponse>get(API.getConcentratorList)
+        OkGo.<RecordDownLoadResponse>get(API.getSharedUrl(context)+API.getConcentratorList)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .cacheKey("RecordDownLoadList")
@@ -79,7 +79,7 @@ public class ProgectRecordDownLoadPresenter implements I_RecordDownLoadPresenter
             }
         }
         mapObject.put("list",recordList);
-        OkGo.<CommonResponse>post(API.saveConcentratorList)
+        OkGo.<CommonResponse>post(API.getSharedUrl(context)+API.saveConcentratorList)
                 .tag(this)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
                 .upJson(new Gson().toJson(mapObject))

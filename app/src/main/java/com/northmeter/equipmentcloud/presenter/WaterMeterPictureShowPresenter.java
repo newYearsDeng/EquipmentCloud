@@ -38,7 +38,7 @@ public class WaterMeterPictureShowPresenter implements I_WaterMeterPictureShowPr
 
     @Override
     public void getNetWorkPicture(String equipmentNum,String itemTypeId) {
-        OkGo.<NetWorkPictureBean>get(API.getMeterNetWorkPic)
+        OkGo.<NetWorkPictureBean>get(API.getSharedUrl(context)+API.getMeterNetWorkPic)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())

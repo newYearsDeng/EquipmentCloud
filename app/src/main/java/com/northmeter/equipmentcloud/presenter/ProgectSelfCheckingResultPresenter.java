@@ -11,8 +11,6 @@ import com.northmeter.equipmentcloud.I.I_ProgectSelfCheckingResultPresenter;
 import com.northmeter.equipmentcloud.I.I_ShowSelfCheckingResult;
 import com.northmeter.equipmentcloud.base.API;
 import com.northmeter.equipmentcloud.bean.CommonResponse;
-import com.northmeter.equipmentcloud.bean.ProgectBuildDeviceResponse;
-import com.northmeter.equipmentcloud.bean.SingleSelfCheckingResultResponse;
 import com.northmeter.equipmentcloud.http.DialogCallback;
 import com.northmeter.equipmentcloud.utils.SaveUserInfo;
 
@@ -38,7 +36,7 @@ public class ProgectSelfCheckingResultPresenter implements I_ProgectSelfChecking
     public void getProgectSelfCheckingResult() {
         Map mapList = new HashMap();
         mapList.put("recordId","");
-        OkGo.<CommonResponse>post(API.doactiveEquipment)
+        OkGo.<CommonResponse>post(API.getSharedUrl(context)+API.doactiveEquipment)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())

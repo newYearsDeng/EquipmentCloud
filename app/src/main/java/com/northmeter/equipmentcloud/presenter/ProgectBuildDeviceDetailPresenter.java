@@ -3,7 +3,6 @@ package com.northmeter.equipmentcloud.presenter;
 import android.app.Activity;
 import android.content.Context;
 
-import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.model.Response;
@@ -14,9 +13,6 @@ import com.northmeter.equipmentcloud.bean.CommonResponse;
 import com.northmeter.equipmentcloud.bean.ProgectDeviceDetailResponse;
 import com.northmeter.equipmentcloud.http.DialogCallback;
 import com.northmeter.equipmentcloud.utils.SaveUserInfo;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by dyd on 2019/3/11.
@@ -33,7 +29,7 @@ public class ProgectBuildDeviceDetailPresenter implements I_ProgectBuildDeviceDe
 
     @Override
     public void getEquipmentDetails(int recordId) {
-        OkGo.<ProgectDeviceDetailResponse>get(API.getEquipmentDetails)
+        OkGo.<ProgectDeviceDetailResponse>get(API.getSharedUrl(context)+API.getEquipmentDetails)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
@@ -59,14 +55,11 @@ public class ProgectBuildDeviceDetailPresenter implements I_ProgectBuildDeviceDe
 
     @Override
     public void cancelRegister(int recordId) {
-        Map mapList = new HashMap();
-        mapList.put("recordId",recordId);
-
-        OkGo.<CommonResponse>post(API.cancelRegister)
+        OkGo.<CommonResponse>post(API.getSharedUrl(context)+API.cancelRegister)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
-                .upJson(new Gson().toJson(mapList))
+                .params("recordId",recordId)
                 .execute(new DialogCallback<CommonResponse>((Activity) context,CommonResponse.class) {
                              @Override
                              public void onSuccess(Response<CommonResponse> response) {

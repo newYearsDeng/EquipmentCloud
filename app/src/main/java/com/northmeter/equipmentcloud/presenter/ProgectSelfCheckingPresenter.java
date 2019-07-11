@@ -2,7 +2,6 @@ package com.northmeter.equipmentcloud.presenter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
@@ -34,7 +33,7 @@ public class ProgectSelfCheckingPresenter implements I_ProgectSelfCheckingPresen
 
     @Override
     public void getRecordImportBuildList(int projectId) {
-        OkGo.<RecordImportResponse>get(API.getBuildList)
+        OkGo.<RecordImportResponse>get(API.getSharedUrl(context)+API.getBuildList)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .cacheKey("RecordImportList")
@@ -70,7 +69,7 @@ public class ProgectSelfCheckingPresenter implements I_ProgectSelfCheckingPresen
         Map mapList = new HashMap();
         mapList.put("projectId",projectId);
         mapList.put("recodeId",recodeId);
-        OkGo.<CommonResponse>post(API.singleSelfChecking)
+        OkGo.<CommonResponse>post(API.getSharedUrl(context)+API.singleSelfChecking)
                 .tag(this)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
                 .upJson(new Gson().toJson(mapList))

@@ -1,33 +1,20 @@
 package com.northmeter.equipmentcloud.activity;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.LocationManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.lzy.okgo.OkGo;
-import com.lzy.okgo.model.Response;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+
 import com.northmeter.equipmentcloud.I.I_ShowReturnData;
 import com.northmeter.equipmentcloud.R;
 import com.northmeter.equipmentcloud.base.API;
-import com.northmeter.equipmentcloud.base.BaseActivity;
-import com.northmeter.equipmentcloud.base.WebServiceUtils;
-import com.northmeter.equipmentcloud.bean.CommonResponse;
-import com.northmeter.equipmentcloud.bluetooth.bluetooth.blueActivity.Blue_MainActivity;
-import com.northmeter.equipmentcloud.bluetooth.bt_bluetooth.BTMainActivity;
-import com.northmeter.equipmentcloud.http.DialogCallback;
+import com.northmeter.equipmentcloud.base.CheckPermissionsActivity;
 import com.northmeter.equipmentcloud.presenter.LoginPresenter;
 import com.northmeter.equipmentcloud.utils.SaveUserInfo;
 import com.northmeter.equipmentcloud.utils.SharedPreferencesUtil;
@@ -39,7 +26,7 @@ import butterknife.OnClick;
  * Created by dyd on 2018/12/13.
  */
 
-public class LoginActivity extends BaseActivity implements I_ShowReturnData{
+public class LoginActivity extends CheckPermissionsActivity implements I_ShowReturnData{
 
     @BindView(R.id.et_login_name)
     EditText etLoginName;
@@ -55,61 +42,6 @@ public class LoginActivity extends BaseActivity implements I_ShowReturnData{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED||
-                    checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                checkLocationAndOpenCamer();
-            }else{
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CAMERARESULT);
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_CAMERARESULT:
-                boolean isAllGranted = true;
-                for(int result : grantResults){
-                    if(result == PackageManager.PERMISSION_DENIED){
-                        isAllGranted = false;
-                        break;
-                    }
-                }
-                if(!isAllGranted){
-                    //权限有缺失
-                    showMsg("该功能需要您授权打开相机和定位");
-                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    Uri uri = Uri.fromParts("package", getPackageName(), null);
-                    intent.setData(uri);
-                    startActivityForResult(intent, 10);
-                }else{
-                    checkLocationAndOpenCamer();
-                }
-                break;
-            case REQUEST_LOCATIONARESULT:
-                break;
-            default:
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                Uri uri = Uri.fromParts("package", getPackageName(), null);
-                intent.setData(uri);
-                startActivityForResult(intent, 10);
-                break;
-        }
-
-    }
-
-    /**检查是否打开了定位服务，再打开相机扫描*/
-    private void checkLocationAndOpenCamer(){
-        LocationManager lm = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
-        boolean locationISOK = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if(!locationISOK){
-            Intent intent = new Intent();
-            intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivityForResult(intent, REQUEST_LOCATIONARESULT);
-        }
     }
 
     @Override
@@ -133,7 +65,7 @@ public class LoginActivity extends BaseActivity implements I_ShowReturnData{
 //        }
     }
 
-    @OnClick({R.id.btn_login, R.id.iv_delete,R.id.iv_show})
+    @OnClick({R.id.btn_login, R.id.iv_delete,R.id.iv_show,R.id.iv_network})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_show://密码显示或隐藏
@@ -151,6 +83,9 @@ public class LoginActivity extends BaseActivity implements I_ShowReturnData{
             case R.id.iv_delete://输入框清空
                 etLoginName.setText("");
                 etLoginPasswd.setText("");
+                break;
+            case R.id.iv_network://网络设置
+                showNetWorkDialog();
                 break;
         }
     }
@@ -180,5 +115,38 @@ public class LoginActivity extends BaseActivity implements I_ShowReturnData{
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    public void showNetWorkDialog() {
+        final AlertDialog dialogSex = new AlertDialog.Builder(new ContextThemeWrapper(LoginActivity.this, R.style.AlertDialog)).create();
+        dialogSex.show();
+        Window window = dialogSex.getWindow();
+        window.setContentView(R.layout.dialog_network);
+        dialogSex.setCanceledOnTouchOutside(true);
+        dialogSex.setCancelable(true);
+        // 在此设置显示动画
+        window.setWindowAnimations(R.style.AnimBottom_Dialog);
+
+        EditText netInput = window.findViewById(R.id.et_net_input);
+        netInput.setText(SharedPreferencesUtil.getPrefString(LoginActivity.this,"BASE_URL",API.URL_BASE));
+
+        window.findViewById(R.id.btn_net_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                netInput.setText(API.URL_BASE);
+                SharedPreferencesUtil.setPrefString(LoginActivity.this,"BASE_URL",API.URL_BASE);
+                dialogSex.cancel();
+            }
+        });
+        window.findViewById(R.id.btn_net_sure).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferencesUtil.setPrefString(LoginActivity.this,"BASE_URL",netInput.getText().toString());
+                dialogSex.cancel();
+            }
+        });
+        window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        dialogSex.show();
     }
 }

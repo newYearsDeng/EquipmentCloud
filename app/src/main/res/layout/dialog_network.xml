@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:background="@drawable/content_background"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="320dp"
+        android:paddingTop="10dp"
+        android:layout_height="wrap_content"
+        android:alpha="0.8"
+        android:background="@drawable/content_background"
+        android:gravity="top">
+
+        <TextView
+            android:id="@+id/tv_net_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:text="网络设置"/>
+
+        <LinearLayout
+            android:id="@+id/layout_net"
+            android:padding="5dp"
+            android:layout_below="@+id/tv_net_title"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:gravity="center">
+            <EditText
+                android:id="@+id/et_net_input"
+                android:background="@null"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:textSize="16sp"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:hint="https://devapi.beidiancloud.cn/machine-cloud"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_below="@+id/layout_net"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/btn_net_back"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/selector_sure_button_content_white"
+                android:text="默认设置"
+                android:textColor="@color/color_login_button"
+                android:textSize="15sp" />
+            <Button
+                android:id="@+id/btn_net_sure"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/selector_sure_button_bg"
+                android:text="保存配置"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

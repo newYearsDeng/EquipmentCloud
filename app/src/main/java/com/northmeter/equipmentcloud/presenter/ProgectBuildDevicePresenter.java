@@ -13,9 +13,7 @@ import com.northmeter.equipmentcloud.I.I_ProgectBuildDevicePresenter;
 import com.northmeter.equipmentcloud.I.I_ShowBuildDevice;
 import com.northmeter.equipmentcloud.base.API;
 import com.northmeter.equipmentcloud.base.Constants;
-import com.northmeter.equipmentcloud.bean.LocalConfigurationPlanBean;
 import com.northmeter.equipmentcloud.bean.ProgectBuildDeviceResponse;
-import com.northmeter.equipmentcloud.bean.ProgectBuildListResponse;
 import com.northmeter.equipmentcloud.http.DialogCallback;
 import com.northmeter.equipmentcloud.utils.SaveUserInfo;
 import com.northmeter.equipmentcloud.utils.Udp_Help;
@@ -54,7 +52,7 @@ public class ProgectBuildDevicePresenter implements I_ProgectBuildDevicePresente
     /**获取设备列表*/
     @Override
     public void getEquipList(int projectId, int buildingId ) {
-        OkGo.<ProgectBuildDeviceResponse>get(API.getEquipList)
+        OkGo.<ProgectBuildDeviceResponse>get(API.getSharedUrl(context)+API.getEquipList)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
@@ -88,7 +86,7 @@ public class ProgectBuildDevicePresenter implements I_ProgectBuildDevicePresente
         mapList.put("equipmentNum",equipmentNum);
         mapList.put("itemTypeId",itemTypeId);
         mapList.put("equipmentAddress",equipmentAddress);
-        OkGo.<ProgectBuildDeviceResponse>post(API.registereEquipment)
+        OkGo.<ProgectBuildDeviceResponse>post(API.getSharedUrl(context)+API.registereEquipment)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
@@ -117,7 +115,7 @@ public class ProgectBuildDevicePresenter implements I_ProgectBuildDevicePresente
     public void doactiveEquipment(int recordId, final int state) {
         Map mapList = new HashMap();
         mapList.put("recordId",recordId);
-        OkGo.<ProgectBuildDeviceResponse>get(API.doactiveEquipment)
+        OkGo.<ProgectBuildDeviceResponse>get(API.getSharedUrl(context)+API.doactiveEquipment)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
@@ -151,7 +149,7 @@ public class ProgectBuildDevicePresenter implements I_ProgectBuildDevicePresente
         mapList.put("itemTypeId",itemTypeId);
         mapList.put("equipmentName",equipmentName);
 
-        OkGo.<ProgectBuildDeviceResponse>get(API.singleSelfChecking)
+        OkGo.<ProgectBuildDeviceResponse>get(API.getSharedUrl(context)+API.singleSelfChecking)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
@@ -189,7 +187,7 @@ public class ProgectBuildDevicePresenter implements I_ProgectBuildDevicePresente
                 delList.add(checkList.getRecordId());
             }
         }
-        OkGo.<ProgectBuildDeviceResponse>post(API.deleteEquipment)
+        OkGo.<ProgectBuildDeviceResponse>post(API.getSharedUrl(context)+API.deleteEquipment)
                 .tag(this)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
                 .upJson(new Gson().toJson(delList))

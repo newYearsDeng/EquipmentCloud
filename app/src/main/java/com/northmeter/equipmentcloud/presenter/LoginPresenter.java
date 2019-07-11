@@ -8,9 +8,7 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
 import com.northmeter.equipmentcloud.I.I_LoginPresenter;
 import com.northmeter.equipmentcloud.I.I_ShowReturnData;
-import com.northmeter.equipmentcloud.activity.ProgectListActivity;
 import com.northmeter.equipmentcloud.base.API;
-import com.northmeter.equipmentcloud.bean.CommonResponse;
 import com.northmeter.equipmentcloud.bean.LoginResponse;
 import com.northmeter.equipmentcloud.bean.UserInfo;
 import com.northmeter.equipmentcloud.http.DialogCallback;
@@ -36,7 +34,7 @@ public class LoginPresenter implements I_LoginPresenter {
         Map mapList = new HashMap();
         mapList.put("userName",userName);
         mapList.put("passWord",passWord);
-        OkGo.<LoginResponse>post(API.login)
+        OkGo.<LoginResponse>post(API.getSharedUrl(context)+API.login)
                 .tag(this)
                 .upJson(new Gson().toJson(mapList))
                 .execute(new DialogCallback<LoginResponse>((Activity) context,LoginResponse.class) {

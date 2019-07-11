@@ -3,7 +3,6 @@ package com.northmeter.equipmentcloud.presenter;
 import android.app.Activity;
 import android.content.Context;
 
-import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.FileCallback;
@@ -14,7 +13,6 @@ import com.northmeter.equipmentcloud.I.I_ProgectListPresenter;
 import com.northmeter.equipmentcloud.I.I_ShowProgectList;
 import com.northmeter.equipmentcloud.base.API;
 import com.northmeter.equipmentcloud.base.Constants;
-import com.northmeter.equipmentcloud.bean.CommonResponse;
 import com.northmeter.equipmentcloud.bean.ConfigurationPlanResponse;
 import com.northmeter.equipmentcloud.bean.LocalConfigurationPlanBean;
 import com.northmeter.equipmentcloud.bean.ProgectListResponse;
@@ -43,7 +41,7 @@ public class ProgectListPresenter implements I_ProgectListPresenter {
     public void getProgectList(int status) {
         Map mapList = new HashMap();
         mapList.put("status",status);
-        OkGo.<ProgectListResponse>get(API.getProjectList)
+        OkGo.<ProgectListResponse>get(API.getSharedUrl(context)+API.getProjectList)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
@@ -70,7 +68,7 @@ public class ProgectListPresenter implements I_ProgectListPresenter {
     /**获取配置方案*/
     @Override
     public void getConfigurationPlan(final int projectId, String projectName) {
-        OkGo.<ConfigurationPlanResponse>get(API.getConfigurationPlan)
+        OkGo.<ConfigurationPlanResponse>get(API.getSharedUrl(context)+API.getConfigurationPlan)
                 .tag(this)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
                 .params("projectName",projectName)

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -23,7 +24,7 @@ import java.util.List;
  * E-mail:elecat@126.com
  *
  * 检查权限
-*/
+ */
 
 public class CheckPermissionsActivity extends BaseActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback{
@@ -37,10 +38,11 @@ public class CheckPermissionsActivity extends BaseActivity implements
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.CAMERA
 //            Manifest.permission.RECEIVE_SMS,
 //            Manifest.permission.RECORD_AUDIO,
 //            Manifest.permission.CALL_PHONE,
-//            Manifest.permission.CAMERA
+
     };
 
     private static final int PERMISSON_REQUESTCODE = 0;
@@ -66,6 +68,15 @@ public class CheckPermissionsActivity extends BaseActivity implements
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED||
+//                    checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//                checkLocationAndOpenCamer();
+//            }else{
+//                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
+//                        Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CAMERARESULT);
+//            }
+//        }
     }
 
     /**
@@ -133,6 +144,41 @@ public class CheckPermissionsActivity extends BaseActivity implements
         }
     }
 
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        switch (requestCode) {
+//            case REQUEST_CAMERARESULT:
+//                boolean isAllGranted = true;
+//                for(int result : grantResults){
+//                    if(result == PackageManager.PERMISSION_DENIED){
+//                        isAllGranted = false;
+//                        break;
+//                    }
+//                }
+//                if(!isAllGranted){
+//                    //权限有缺失
+//                    showMsg("该功能需要您授权打开相机和定位");
+//                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+//                    intent.setData(uri);
+//                    startActivityForResult(intent, 10);
+//                }else{
+//                    checkLocationAndOpenCamer();
+//                }
+//                break;
+//            case REQUEST_LOCATIONARESULT:
+//                break;
+//            default:
+//                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//                Uri uri = Uri.fromParts("package", getPackageName(), null);
+//                intent.setData(uri);
+//                startActivityForResult(intent, 10);
+//                break;
+//        }
+//
+//    }
+
     /**
      * 显示提示信息
      *
@@ -177,6 +223,21 @@ public class CheckPermissionsActivity extends BaseActivity implements
                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.parse("package:" + getPackageName()));
         startActivity(intent);
+    }
+
+    private static final int REQUEST_CAMERARESULT=201;
+    private static final int REQUEST_LOCATIONARESULT=2010;
+    /**
+     * 检查是否打开了定位服务，再打开相机扫描
+     */
+    private void checkLocationAndOpenCamer(){
+        LocationManager lm = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
+        boolean locationISOK = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if(!locationISOK){
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(intent, REQUEST_LOCATIONARESULT);
+        }
     }
 
 }

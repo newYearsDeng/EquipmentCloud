@@ -4,26 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.BitmapCallback;
-import com.lzy.okgo.callback.FileCallback;
-import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.base.Request;
 import com.northmeter.equipmentcloud.I.I_ProgectSingleSelfCheckingResultPresenter;
 import com.northmeter.equipmentcloud.I.I_ShowSingleSelfChecking;
 import com.northmeter.equipmentcloud.base.API;
-import com.northmeter.equipmentcloud.base.Constants;
-import com.northmeter.equipmentcloud.bean.CommonResponse;
 import com.northmeter.equipmentcloud.bean.SingleSelfCheckingResultResponse;
 import com.northmeter.equipmentcloud.http.DialogCallback;
 import com.northmeter.equipmentcloud.utils.SaveUserInfo;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by dyd on 2019/1/21.
@@ -42,7 +32,7 @@ public class ProgectSingleSelfCheckingResultPresenter implements I_ProgectSingle
     /**查询单个设备自检结果*/
     @Override
     public void getDeviceSelfCheckingResult(int recordId) {
-        OkGo.<SingleSelfCheckingResultResponse>get(API.singlSeselfCheckingResult)
+        OkGo.<SingleSelfCheckingResultResponse>get(API.getSharedUrl(context)+API.singlSeselfCheckingResult)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())

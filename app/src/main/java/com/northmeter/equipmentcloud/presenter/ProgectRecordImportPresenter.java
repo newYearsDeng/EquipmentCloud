@@ -32,7 +32,7 @@ public class ProgectRecordImportPresenter implements I_ProgectRecordImportPresen
 
     @Override
     public void getRecordImportBuildList(int projectId) {
-        OkGo.<RecordImportResponse>get(API.getBuildList)
+        OkGo.<RecordImportResponse>get(API.getSharedUrl(context)+API.getBuildList)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .cacheKey("RecordImportList")
@@ -74,7 +74,7 @@ public class ProgectRecordImportPresenter implements I_ProgectRecordImportPresen
         mapList.put("itemTypeId",itemTypeId);//产品型号ID
         mapList.put("equipmentAddress",equipmentAddress);//设备安装地址，是地址字符串的拼接
         mapList.put("projectId",projectId);//项目ID
-        OkGo.<RecordImportResponse>post(API.saveEquipmentRecord)
+        OkGo.<RecordImportResponse>post(API.getSharedUrl(context)+API.saveEquipmentRecord)
                 .tag(this)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
                 .upJson(new Gson().toJson(mapList))

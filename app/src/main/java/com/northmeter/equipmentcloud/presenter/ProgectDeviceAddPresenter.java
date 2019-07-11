@@ -47,7 +47,7 @@ public class ProgectDeviceAddPresenter implements I_ProgectDeviceAddPresenter {
         mapList.put("configurationPlanName",configurationPlanName);
         mapList.put("needDownRecord",needDownRecord);
 
-        OkGo.<CommonResponse>post(API.addBuildingequipment)
+        OkGo.<CommonResponse>post(API.getSharedUrl(context)+API.addBuildingequipment)
                 .tag(this)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
                 .upJson(new Gson().toJson(mapList))
@@ -73,7 +73,7 @@ public class ProgectDeviceAddPresenter implements I_ProgectDeviceAddPresenter {
     /**获取配置方案*/
     @Override
     public void getConfigurationPlan(String projectName) {
-        OkGo.<ConfigurationPlanResponse>get(API.getConfigurationPlan)
+        OkGo.<ConfigurationPlanResponse>get(API.getSharedUrl(context)+API.getConfigurationPlan)
                 .tag(this)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
                 .params("projectName",projectName)
@@ -100,7 +100,7 @@ public class ProgectDeviceAddPresenter implements I_ProgectDeviceAddPresenter {
     /**获取产品型号*/
     @Override
     public void getProjetType() {
-        OkGo.<ProjetTypeResponse>post(API.getProjetType)
+        OkGo.<ProjetTypeResponse>post(API.getSharedUrl(context)+API.getProjetType)
                 .tag(this)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
                 .execute(new DialogCallback<ProjetTypeResponse>((Activity) context,ProjetTypeResponse.class) {

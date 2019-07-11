@@ -11,7 +11,6 @@ import com.northmeter.equipmentcloud.I.I_ProgectBuildListPresenter;
 import com.northmeter.equipmentcloud.I.I_ShowBuildList;
 import com.northmeter.equipmentcloud.base.API;
 import com.northmeter.equipmentcloud.bean.CommonResponse;
-import com.northmeter.equipmentcloud.bean.ConfigurationPlanResponse;
 import com.northmeter.equipmentcloud.bean.ProgectBuildListResponse;
 import com.northmeter.equipmentcloud.http.DialogCallback;
 import com.northmeter.equipmentcloud.utils.SaveUserInfo;
@@ -33,7 +32,7 @@ public class ProgectBuildListPresenter implements I_ProgectBuildListPresenter {
 
     @Override
     public void getBuildList(int projectId,int parentId) {
-        OkGo.<ProgectBuildListResponse>get(API.getBuildList)
+        OkGo.<ProgectBuildListResponse>get(API.getSharedUrl(context)+API.getBuildList)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
@@ -63,7 +62,7 @@ public class ProgectBuildListPresenter implements I_ProgectBuildListPresenter {
         Map mapList = new HashMap();
         mapList.put("projectId",projectId);
         mapList.put("recodeId",recodeId);
-        OkGo.<CommonResponse>post(API.singleSelfChecking)
+        OkGo.<CommonResponse>post(API.getSharedUrl(context)+API.singleSelfChecking)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
