@@ -65,7 +65,7 @@ public class LoginActivity extends CheckPermissionsActivity implements I_ShowRet
 //        }
     }
 
-    @OnClick({R.id.btn_login, R.id.iv_delete,R.id.iv_show,R.id.iv_network})
+    @OnClick({R.id.btn_login, R.id.iv_delete,R.id.iv_show,R.id.ll_network})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_show://密码显示或隐藏
@@ -84,7 +84,7 @@ public class LoginActivity extends CheckPermissionsActivity implements I_ShowRet
                 etLoginName.setText("");
                 etLoginPasswd.setText("");
                 break;
-            case R.id.iv_network://网络设置
+            case R.id.ll_network://网络设置
                 showNetWorkDialog();
                 break;
         }

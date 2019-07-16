@@ -16,7 +16,7 @@ public class Constants {
     public static final String NAME = "title";
     public static final String METERNUM = "eqptIdCode";
 
-    public static final String ANALYSISNUM = "https://cloud-meters.net/water/hardware/getDigit";
+    public static final String ANALYSISNUM = "https://cloud-meters.net:444/water/hardware/getDigit";
     /**
      * 图片存储路径
      */
