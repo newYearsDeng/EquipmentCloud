@@ -1,5 +1,6 @@
 package com.northmeter.equipmentcloud.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.KeyEvent;
@@ -60,7 +61,7 @@ public class ProgectListActivity extends BaseActivity {
         super.setTitle();
         tvToolbarTitle.setText("项目列表");
         btnTbBack.setVisibility(View.GONE);
-        //tvRightText.setText("下一步");
+        tvRightText.setText("注册记录");
     }
 
     @Override
@@ -73,6 +74,8 @@ public class ProgectListActivity extends BaseActivity {
         vpEmpty.setAdapter(adapter);
         tlEmpty.setupWithViewPager(vpEmpty);
         vpEmpty.setOffscreenPageLimit(2);
+        //启动service，上传未完成的设备注册任务
+        startService(new Intent(this,RegistService.class));
     }
 
     @Override
@@ -92,7 +95,7 @@ public class ProgectListActivity extends BaseActivity {
                 this.finish();
                 break;
             case R.id.tv_right_text:
-                goActivity(ProgectManagementActivity.class);
+                goActivity(RegistRecordListActivity.class);
                 break;
         }
     }

@@ -29,6 +29,32 @@ public class ProgectBuildListResponse extends CommonResponse {
         private int equipmentCount;//建筑下的设备的总数
         private int equipmentUnregistCount;//建筑下的未注册设备的总数
         private int equipmentUnactivateCount;//建筑下的未激活设备的总数
+        private int fatherRecordId;
+
+        public PageList(int projectId,int recordId,String buildingName,int type,int parentId,
+                        int equipmentCount,int equipmentUnregistCount,int equipmentUnactivateCount,int fatherRecordId){
+            this.recordId = recordId;
+            this.buildingName = buildingName;
+            this.type = type;
+            this.parentId = parentId;
+            this.projectId = projectId;
+            this.equipmentCount = equipmentCount;
+            this.equipmentUnregistCount = equipmentUnregistCount;
+            this.equipmentUnactivateCount = equipmentUnactivateCount;
+            this.fatherRecordId = fatherRecordId;
+        }
+
+        public PageList(int projectId,int recordId,String buildingName,int type,int parentId,
+                        int equipmentCount,int equipmentUnregistCount,int equipmentUnactivateCount){
+            this.recordId = recordId;
+            this.buildingName = buildingName;
+            this.type = type;
+            this.parentId = parentId;
+            this.projectId = projectId;
+            this.equipmentCount = equipmentCount;
+            this.equipmentUnregistCount = equipmentUnregistCount;
+            this.equipmentUnactivateCount = equipmentUnactivateCount;
+        }
 
         public int getRecordId() {
             return recordId;
@@ -85,13 +111,18 @@ public class ProgectBuildListResponse extends CommonResponse {
         public void setEquipmentUnregistCount(int equipmentUnregistCount) {
             this.equipmentUnregistCount = equipmentUnregistCount;
         }
-
         public int getEquipmentUnactivateCount() {
             return equipmentUnactivateCount;
         }
 
         public void setEquipmentUnactivateCount(int equipmentUnactivateCount) {
             this.equipmentUnactivateCount = equipmentUnactivateCount;
+        }
+        public int getFatherRecordId() {
+            return fatherRecordId;
+        }
+        public void setFatherRecordId(int fatherRecordId) {
+            this.fatherRecordId = fatherRecordId;
         }
     }
 

@@ -136,11 +136,17 @@ public class CheckPermissionsActivity extends BaseActivity implements
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] paramArrayOfInt) {
-        if (requestCode == PERMISSON_REQUESTCODE) {
-            if (!verifyPermissions(paramArrayOfInt)) {
-                showMissingPermissionDialog();
-                isNeedCheck = false;
-            }
+        switch(requestCode){
+            case PERMISSON_REQUESTCODE:
+                if (!verifyPermissions(paramArrayOfInt)) {
+                    showMissingPermissionDialog();
+                    isNeedCheck = false;
+                }else{
+                    checkLocationAndOpenCamer();
+                }
+                break;
+            case REQUEST_LOCATIONARESULT:
+                break;
         }
     }
 

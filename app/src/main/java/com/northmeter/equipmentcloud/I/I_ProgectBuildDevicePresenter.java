@@ -1,5 +1,6 @@
 package com.northmeter.equipmentcloud.I;
 
+import com.northmeter.equipmentcloud.bean.DBRegistBean;
 import com.northmeter.equipmentcloud.bean.ProgectBuildDeviceResponse;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface I_ProgectBuildDevicePresenter {
     /**查询设备列表*/
     void getEquipList(int projectId , int buildingId );
     /**设备注册*/
-    void registereEquipment(int recordId,String equipmentId,String equipmentNum,String itemTypeId ,String equipmentAddress,int state);
+    void registereEquipment(DBRegistBean registBean,int state);
     /**设备激活*/
     void doactiveEquipment(int recordId,int state);
     /**设备测试*/

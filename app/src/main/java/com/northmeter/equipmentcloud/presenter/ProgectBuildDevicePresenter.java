@@ -13,8 +13,10 @@ import com.northmeter.equipmentcloud.I.I_ProgectBuildDevicePresenter;
 import com.northmeter.equipmentcloud.I.I_ShowBuildDevice;
 import com.northmeter.equipmentcloud.base.API;
 import com.northmeter.equipmentcloud.base.Constants;
+import com.northmeter.equipmentcloud.bean.DBRegistBean;
 import com.northmeter.equipmentcloud.bean.ProgectBuildDeviceResponse;
 import com.northmeter.equipmentcloud.http.DialogCallback;
+import com.northmeter.equipmentcloud.sqlite.DBRegistHelper;
 import com.northmeter.equipmentcloud.utils.SaveUserInfo;
 import com.northmeter.equipmentcloud.utils.Udp_Help;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
@@ -54,6 +56,7 @@ public class ProgectBuildDevicePresenter implements I_ProgectBuildDevicePresente
     public void getEquipList(int projectId, int buildingId ) {
         OkGo.<ProgectBuildDeviceResponse>get(API.getSharedUrl(context)+API.getEquipList)
                 .tag(this)
+                .cacheKey("equip"+String.valueOf(projectId)+String.valueOf(buildingId))
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
                 .params("projectId",projectId)
@@ -73,19 +76,29 @@ public class ProgectBuildDevicePresenter implements I_ProgectBuildDevicePresente
                                  super.onError(response);
                                  showBuildDevice.returnFail("连接失败，请稍后重试");
                              }
+
+                             @Override
+                             public void onCacheSuccess(Response<ProgectBuildDeviceResponse> response) {
+                                 super.onCacheSuccess(response);
+                                 if(response.body().getCode() == 0){
+                                     showBuildDevice.showData(response.body().getList());
+                                 }else{
+                                     showBuildDevice.returnFail(response.body().getMsg());
+                                 }
+                             }
                          }
                 );
     }
 
     /**设备注册*/
     @Override
-    public void registereEquipment(int recordId, String equipmentId, String equipmentNum, String itemTypeId, String equipmentAddress, final int state) {
+    public void registereEquipment(DBRegistBean registBean, final int state) {
         Map mapList = new HashMap();
-        mapList.put("recordId",recordId);
-        mapList.put("equipmentId",equipmentId);
-        mapList.put("equipmentNum",equipmentNum);
-        mapList.put("itemTypeId",itemTypeId);
-        mapList.put("equipmentAddress",equipmentAddress);
+        mapList.put("recordId",registBean.getRecordId());
+        mapList.put("equipmentId",registBean.getEquipmentId());
+        mapList.put("equipmentNum",registBean.getEquipmentNum());
+        mapList.put("itemTypeId",registBean.getItemTypeId());
+        mapList.put("equipmentAddress",registBean.getEquipmentAddress());
         OkGo.<ProgectBuildDeviceResponse>post(API.getSharedUrl(context)+API.registereEquipment)
                 .tag(this)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
@@ -96,15 +109,22 @@ public class ProgectBuildDevicePresenter implements I_ProgectBuildDevicePresente
                              public void onSuccess(Response<ProgectBuildDeviceResponse> response) {
                                  if(response.body().getCode() == 0){
                                      showBuildDevice.returnSuccess(response.body().getMsg(),state);
+                                     //注册成功，删除设备注册任务
+                                     new DBRegistHelper(context).delete(registBean.getRecordId());
                                  }else{
-                                     showBuildDevice.returnFail(response.body().getMsg());
+                                     if(response.body().getMsg().indexOf("不存在")>=0){
+                                         new DBRegistHelper(context).delete(registBean.getRecordId());
+                                         showBuildDevice.returnFail(response.body().getMsg());
+                                     }else{
+                                         showBuildDevice.returnFail("注册失败，下次启动时自动注册");
+                                     }
                                  }
                              }
 
                              @Override
                              public void onError(Response<ProgectBuildDeviceResponse> response) {
                                  super.onError(response);
-                                 showBuildDevice.returnFail("连接失败，请稍后重试");
+                                 showBuildDevice.returnFail("网络异常，联网成功后自动上传注册任务");
                              }
                          }
                 );

@@ -26,6 +26,7 @@ import com.northmeter.equipmentcloud.R;
 import com.northmeter.equipmentcloud.adapter.CommonAdapter;
 import com.northmeter.equipmentcloud.adapter.ViewHolder;
 import com.northmeter.equipmentcloud.base.BaseActivity;
+import com.northmeter.equipmentcloud.bean.DBRegistBean;
 import com.northmeter.equipmentcloud.bean.EvenBusBean;
 import com.northmeter.equipmentcloud.bean.ProgectBuildDeviceResponse;
 import com.northmeter.equipmentcloud.bluetooth.AllScanDeviceListActivity;
@@ -37,6 +38,7 @@ import com.northmeter.equipmentcloud.bluetooth.SendBlueMessage;
 import com.northmeter.equipmentcloud.camera.activity.CaptureActivity;
 import com.northmeter.equipmentcloud.enumBean.EvenBusEnum;
 import com.northmeter.equipmentcloud.presenter.ProgectBuildDevicePresenter;
+import com.northmeter.equipmentcloud.sqlite.DBRegistHelper;
 import com.northmeter.equipmentcloud.widget.CommonDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -217,32 +219,29 @@ public class ProgectBuildDeviceActivity extends BaseActivity implements XRefresh
                         if (data.hasExtra("result")) {//扫描到水表编号返回数据
                             scanTableNum = data.getStringExtra("result").toString();
                             //设备注册
-                            progectBuildDevicePresenter.registereEquipment(doRecordId, doEquipmentId,
-                                    scanTableNum, doItemTypeId, buildingName, 1);
+                            DBRegistBean dbRegistBean = new DBRegistBean(doRecordId,doEquipmentId,scanTableNum,
+                                    doItemTypeId,buildingName,0);
+                            //存储设备注册任务
+                            new DBRegistHelper(this).update(dbRegistBean);
+                            //向后台申请注册设备
+                            progectBuildDevicePresenter.registereEquipment(dbRegistBean, 1);
                             return;
                         }
                     }
                 }
                 break;
-            case REQUEST_CONNECT_DEVICE://高速蓝牙
-//                if (resultCode == Activity.RESULT_OK) {
-//                    progectBuildDevicePresenter.startLoadingDialog();
-//                    String address = data.getExtras().getString(
-//                            BtDeviceListActivity.EXTRA_DEVICE_ADDRESS);
-//                    BlueTooth_ConnectHelper.getInstance().blueToothConnect(address);
-//                }
+            case REQUEST_CONNECT_DEVICE://蓝牙
                 if (resultCode == Activity.RESULT_OK) {
                     //断开蓝牙
                     BlueTooth_ConnectHelper.getInstance().stopBlueToothConnect();
                     BleConnect_InstanceHelper.getInstance().cancelConnect();
-                    BleBlue_ConnectHelper.getInstance().cancelConnect();
 
                     int type = data.getExtras().getInt(DATA_TYPE);
                     BluetoothDevice checkedDevice = data.getExtras().getParcelable(DATA_DEVICE);
                     if(type == 0){//BT
                         BlueTooth_ConnectHelper.getInstance().blueToothConnect(checkedDevice.getAddress());
                     }else{
-                        if(Build.VERSION.SDK_INT > 23){
+                        if(Build.VERSION.SDK_INT > 21){
                             BleConnect_InstanceHelper bleConnect = BleConnect_InstanceHelper.getInstance();
                             bleConnect.setMacStr(checkedDevice.getAddress());
                             bleConnect.connecedDevice();

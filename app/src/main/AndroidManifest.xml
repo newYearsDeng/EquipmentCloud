@@ -61,6 +61,7 @@
         <activity android:name=".bluetooth.bt_bluetooth.BtDeviceListActivity"/>
         <activity android:name=".bluetooth.bluetooth.blueActivity.DeviceListActivity"/>
         <activity android:name=".bluetooth.AllScanDeviceListActivity"/>
+        <activity android:name=".activity.RegistRecordListActivity"/>
 
 
         <activity android:name=".bluetooth.bluetooth.blueActivity.Blue_MainActivity"/>
@@ -72,6 +73,8 @@
         <activity android:name=".activity.ProgectRecordImportActivity"
             android:windowSoftInputMode="stateHidden|stateUnchanged"/>
 
+
+        <service android:name=".activity.RegistService"/>
 
         <!--二维码扫描-->
         <activity

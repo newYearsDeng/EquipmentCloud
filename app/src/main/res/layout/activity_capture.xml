@@ -101,7 +101,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_toRightOf="@+id/button_flash"
-                    android:layout_toLeftOf="@+id/iv_show"
+                    android:layout_toLeftOf="@+id/tv_sure"
                     android:layout_marginLeft="14dp"
                     android:background="@null"
                     android:inputType="text"
@@ -109,7 +109,7 @@
                     android:textSize="16sp"
                     android:textColor="@color/white"
                     android:hint="手动输入通讯地址"
-                    android:textColorHint="#22C99E"/>
+                    android:textColorHint="@color/color_little_gray"/>
 
                 <TextView
                     android:id="@+id/tv_sure"
@@ -119,10 +119,10 @@
                     android:layout_gravity="center_vertical"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="5dp"
+                    android:paddingRight="10dp"
                     android:text="确定"
                     android:textSize="16sp"
-                    android:textColor="#22C99E"/>
+                    android:textColor="@color/color_main_back"/>
             </RelativeLayout>
 
         </RelativeLayout>

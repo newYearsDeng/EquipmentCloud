@@ -211,7 +211,7 @@ public class LocationSet_NBDevice extends BaseActivity{
                     if(type == 0){//BT
                         BlueTooth_ConnectHelper.getInstance().blueToothConnect(checkedDevice.getAddress());
                     }else{
-                        if(Build.VERSION.SDK_INT > 23){
+                        if(Build.VERSION.SDK_INT > 21){
                             BleConnect_InstanceHelper bleConnect = BleConnect_InstanceHelper.getInstance();
                             bleConnect.setMacStr(checkedDevice.getAddress());
                             bleConnect.connecedDevice();

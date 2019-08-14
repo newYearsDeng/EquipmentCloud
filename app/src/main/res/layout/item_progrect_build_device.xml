@@ -5,11 +5,10 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:background="#EAEAEA"
+    android:background="@color/white"
     android:id="@+id/linear_buildlist">
 
     <LinearLayout
-        android:background="@color/white"
         android:paddingTop="24dp"
         android:paddingBottom="24dp"
         android:paddingLeft="17dp"
@@ -30,7 +29,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:background="@color/white"
         android:layout_width="200dp"
         android:layout_height="match_parent"
         android:paddingRight="10dp"

@@ -35,8 +35,6 @@ public class LoginActivity extends CheckPermissionsActivity implements I_ShowRet
 
     private boolean showOrHide = false;
     private LoginPresenter loginPresenter;
-    private static final int REQUEST_CAMERARESULT=201;
-    private static final int REQUEST_LOCATIONARESULT=2010;
     private long exitTime;
 
     @Override

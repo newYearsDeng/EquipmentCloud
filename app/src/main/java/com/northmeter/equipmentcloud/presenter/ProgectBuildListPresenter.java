@@ -34,6 +34,7 @@ public class ProgectBuildListPresenter implements I_ProgectBuildListPresenter {
     public void getBuildList(int projectId,int parentId) {
         OkGo.<ProgectBuildListResponse>get(API.getSharedUrl(context)+API.getBuildList)
                 .tag(this)
+                .cacheKey("build"+String.valueOf(projectId)+String.valueOf(parentId))
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
                 .params("projectId",projectId)
@@ -52,6 +53,16 @@ public class ProgectBuildListPresenter implements I_ProgectBuildListPresenter {
                              public void onError(Response<ProgectBuildListResponse> response) {
                                  super.onError(response);
                                  showBuildList.returnFail("连接失败，请稍后重试");
+                             }
+
+                             @Override
+                             public void onCacheSuccess(Response<ProgectBuildListResponse> response) {
+                                 super.onCacheSuccess(response);
+                                 if(response.body().getCode() == 0){
+                                     showBuildList.showData(response.body().getList());
+                                 }else{
+                                     showBuildList.returnFail(response.body().getMsg());
+                                 }
                              }
                          }
                 );

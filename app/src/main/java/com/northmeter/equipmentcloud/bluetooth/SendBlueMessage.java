@@ -80,7 +80,7 @@ public class SendBlueMessage implements ISendBlueMessage {
                 }
                 break;
             case 1:
-                if(Build.VERSION.SDK_INT > 23){
+                if(Build.VERSION.SDK_INT > 21){
                     BleConnect_InstanceHelper bleConnect = BleConnect_InstanceHelper.getInstance();
                     BleDevice bleDevice = BleManager.getInstance().getConnectedDeviceByMac(bleConnect.getMacStr());
                     if (bleDevice == null) {

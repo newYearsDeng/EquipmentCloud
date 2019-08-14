@@ -31,6 +31,7 @@ public class ProgectBuildDeviceDetailPresenter implements I_ProgectBuildDeviceDe
     public void getEquipmentDetails(int recordId) {
         OkGo.<ProgectDeviceDetailResponse>get(API.getSharedUrl(context)+API.getEquipmentDetails)
                 .tag(this)
+                .cacheKey("EquipmentDetails"+recordId)
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .headers("token", SaveUserInfo.getLoginUser(context).getToken())
                 .params("recordId",recordId)
@@ -49,6 +50,16 @@ public class ProgectBuildDeviceDetailPresenter implements I_ProgectBuildDeviceDe
                                  super.onError(response);
                                  showDeviceDetail.returnMessage("连接失败，请稍后重试");
                              }
+
+                             @Override
+                             public void onCacheSuccess(Response<ProgectDeviceDetailResponse> response) {
+                                 super.onCacheSuccess(response);
+                                 if(response.body().getCode() == 0){
+                                     showDeviceDetail.showData(response.body().getList());
+                                 }else{
+                                     showDeviceDetail.returnMessage(response.body().getMsg());
+                                 }
+                             }
                          }
                 );
     }
@@ -64,7 +75,7 @@ public class ProgectBuildDeviceDetailPresenter implements I_ProgectBuildDeviceDe
                              @Override
                              public void onSuccess(Response<CommonResponse> response) {
                                  if(response.body().getCode() == 0){
-                                     showDeviceDetail.returnMessage("撤销注册完成");
+                                     showDeviceDetail.returnMessage("撤销注册成功");
                                  }else{
                                      showDeviceDetail.returnMessage(response.body().getMsg());
                                  }

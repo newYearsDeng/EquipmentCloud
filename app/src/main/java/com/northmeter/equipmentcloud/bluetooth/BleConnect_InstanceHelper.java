@@ -28,12 +28,12 @@ import java.util.Set;
 
 public class BleConnect_InstanceHelper implements GattHandler.OnNotifyCallback {
     //蓝牙抄控器
-    public static final String SendCharacterist = "6e400002-b5a3-f393-e0a9-e50e24dc4179";
-    public static final String NotifyCharacterist = "6e400003-b5a3-f393-e0a9-e50e24dc4179";
+    public static final String SendCharacterist = "6e400002b5a3f393e0a9e50e24dc4179";
+    public static final String NotifyCharacterist = "6e400003b5a3f393e0a9e50e24dc4179";
 
     //蓝牙摄像表
-//    public static final String SendCharacterist = "00002afe-0000-1000-8000-00805f9b34fb";
-//    public static final String NotifyCharacterist = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
+//    public static final String SendCharacterist = "00002afe00001000800000805f9b34fb";
+//    public static final String NotifyCharacterist = "6e400003b5a3f393e0a9e50e24dcca9e";
 
     private int sendInstance;
     private int notifyInstance;
@@ -95,21 +95,21 @@ public class BleConnect_InstanceHelper implements GattHandler.OnNotifyCallback {
         if (bleDevice == null) {
             return;
         }
-//        GattHandler.getInstance().setOnNotifyCallback(this);
-//        if (!bleDevice.hasNotified(NotifyCharacterist)) {
-//            GattHandler.getInstance().setMtu(bleDevice.getKey(), 200);
-//            GattHandler.getInstance().enableNotifyByUUID(bleDevice.getKey(), NotifyCharacterist);
-//            bleDevice.setNotifyAttInstance(NotifyCharacterist);
-//        }
-//        GattHandler.getInstance().writeByUuid(bleDevice.getKey(), SendCharacterist, Udp_Help.strtoByteArray("BD0A91021512170301120001B1689102151217036811048888323530161916"));
-
-        GattHandler.getInstance().setMtu(bleDevice.getKey(), 512);
-        notifyInstance = bleDevice.getInstanceIdByUuid(NotifyCharacterist);
-        sendInstance = bleDevice.getInstanceIdByUuid(SendCharacterist);
         GattHandler.getInstance().setOnNotifyCallback(this);
-        GattHandler.getInstance().enableNotify(bleDevice.getKey(), notifyInstance);
-        bleDevice.getCharacteristicsByInstanceId(sendInstance);
-        GattHandler.getInstance().write(bleDevice.getKey(), sendInstance, Udp_Help.strtoByteArray(data));
+        if (!bleDevice.hasNotified(NotifyCharacterist)) {
+            GattHandler.getInstance().setMtu(bleDevice.getKey(), 500);
+            GattHandler.getInstance().enableNotifyByUUID(bleDevice.getKey(), NotifyCharacterist);
+            bleDevice.setNotifyAttInstance(NotifyCharacterist);
+        }
+        GattHandler.getInstance().writeByUuid(bleDevice.getKey(), SendCharacterist, Udp_Help.strtoByteArray(data));
+
+//        GattHandler.getInstance().setMtu(bleDevice.getKey(), 512);
+//        notifyInstance = bleDevice.getInstanceIdByUuid(NotifyCharacterist);
+//        sendInstance = bleDevice.getInstanceIdByUuid(SendCharacterist);
+//        GattHandler.getInstance().setOnNotifyCallback(this);
+//        GattHandler.getInstance().enableNotify(bleDevice.getKey(), notifyInstance);
+//        bleDevice.getCharacteristicsByInstanceId(sendInstance);
+//        GattHandler.getInstance().write(bleDevice.getKey(), sendInstance, Udp_Help.strtoByteArray(data));
     }
 
 

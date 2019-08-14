@@ -193,7 +193,6 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
                     //断开蓝牙
                     BlueTooth_ConnectHelper.getInstance().stopBlueToothConnect();
                     BleConnect_InstanceHelper.getInstance().cancelConnect();
-                    BleBlue_ConnectHelper.getInstance().cancelConnect();
 
                     int type = data.getExtras().getInt(DATA_TYPE);
                     BluetoothDevice checkedDevice = data.getExtras().getParcelable(DATA_DEVICE);
@@ -201,7 +200,7 @@ public class ProgectBuildDeviceDetailActivity extends BaseActivity implements I_
                     if(type == 0){//BT
                         BlueTooth_ConnectHelper.getInstance().blueToothConnect(checkedDevice.getAddress());
                     }else{
-                        if(Build.VERSION.SDK_INT > 23){
+                        if(Build.VERSION.SDK_INT > 21){
                             BleConnect_InstanceHelper bleConnect = BleConnect_InstanceHelper.getInstance();
                             bleConnect.setMacStr(checkedDevice.getAddress());
                             bleConnect.connecedDevice();
